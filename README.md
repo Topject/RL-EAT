@@ -110,6 +110,7 @@ docs/FACTS.md                 所有被引用数字的出处
 docs/DATA.md                  数据字段与自解析方法
 docs/REPRODUCE.md             环境安装与复现步骤
 docs/GLOSSARY.md              命名对照
+docs/MARL.md                  多智能体扩展：跑了多少、哪些数字能报
 tools/                        解析、清洗、绘图、取证、链接检查
 ```
 
