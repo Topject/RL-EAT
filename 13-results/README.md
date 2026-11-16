@@ -43,7 +43,7 @@ English: this chapter merges the readings of chapters 01–12 into one table and
 | 6 | **EAT 177.7** | — |
 | 7 | D2SAC 159.5 | — |
 
-（第 1、2 名的差别很小：DPPO 的样本标准差只有 1.0，PPO 是 2.0，两者的均值差远小于种子噪声，所以正文与 `docs/FACTS.md` §1 都写作 `PPO ≈ DPPO`，不把 0.4 分当成真实名次。）
+（第 1、2 名是并列的：DPPO 的样本标准差只有 1.0、PPO 是 2.0，两者的差别远小于种子噪声，所以正文与 `docs/FACTS.md` §1 都写作 `PPO ≈ DPPO`，不把这一线之差当成真实名次。下面的"第 6"沿用 FACTS §1 的列举顺序；若按并列合并档位，EAT 也可以读作第五档。）
 
 两处偏差最值得看：
 

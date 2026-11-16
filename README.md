@@ -180,11 +180,32 @@ python tools\plot_curves.py   --data data --out figures\curves
 
 ---
 
-## 8. 一句话结论 / One-line verdict
+## 8. 上传到 GitHub / Pushing to GitHub
+
+本目录已经是一个独立 git 仓库，并已有一笔初始提交（361 个文件，约 20 MB）：
+
+```powershell
+cd EAT-Story
+git remote add origin https://github.com/<你的账号>/<仓库名>.git
+git branch -M main
+git push -u origin main
+```
+
+几点提醒：
+
+- 仓库里**没有** `.pth` 权重、`events.out.tfevents.*` 原始日志、`runs/` 输出（见 `.gitignore`）。要给出完整可复现包，把这批文件作为 GitHub Release 附件，并在 `docs/DATA.md` 里补一条下载链接。
+- 原始 TensorBoard 日志合计 7.4 GB，如需公开请走 Release 或 Git LFS，不要直接 `git add`。
+- `data/` 是最大的一块（14 MB），全是文本 CSV，压缩率很高，正常 push 不会有问题。
+
+This directory is already its own git repository with one initial commit (361 files, ~20 MB). Weights, raw event files and `runs/` output are intentionally excluded; publish those as Release assets if you want a fully reproducible bundle.
+
+---
+
+## 9. 一句话结论 / One-line verdict
 
 **机制方向复现出来了，名次没有。** 交叉注意力 + DDIM + 可学习 η 的组合在两个种子上拿到 187.28 的平均终点回报（高于任何算法的三种子均值），但它对随机种子极其敏感 —— 第三个种子掉到 158.68；论文的排序需要更多种子和同预算训练才能验证。
 
-**The mechanisms reproduce; the ranking does not.** The cross-attention + DDIM + learnable-η combination does reach the best return in the sweep — on its best run — but it is highly seed-sensitive, and the paper's ordering needs more seeds and budget-matched training before it can be called verified.
+**The mechanisms reproduce; the ranking does not.** The cross-attention + DDIM + learnable-η combination reaches an average of 187.28 on its two good seeds — above every algorithm's 3-seed mean — but it is highly seed-sensitive: the third seed lands at 158.68. The paper's ordering needs more seeds and budget-matched training before it can be called verified.
 
 ---
 
