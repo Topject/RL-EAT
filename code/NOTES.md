@@ -14,7 +14,7 @@ The two directories are verbatim copies of the author's `EAT-master/`, with `__p
 
 1. **驱动脚本缺失**：作者笔记里的 `python scripts/fig6/train.py --algo eat --epoch 500 --device cuda --seed 43` 是实际使用的入口，但 `scripts/fig6/` 不在这个快照里。快照里只有每个算法各自的 `*_train.py`，且都是"改常量再跑"风格，没有 argparse。
 2. **配置双份**：`env/config.py` 的 `EnvConfig`（奖励尺度、可见任务数）与 `scripts/config.py` 的 `GlobalConfig`/`TrainConfig`（节点数、网络宽度、扩散步数）各管一半，改实验要两边都看。
-3. **随机种子**：训练脚本里 `TrainConfig.seed` 默认 42，但本快照没有把种子写进运行目录名，所以 `runs/` 下无法从目录名看出是哪个种子——这也是本仓库 `data/` 里只能用时间戳标识运行的原因。
+3. **随机种子**：训练脚本里 `TrainConfig.seed` 默认 42，但本快照没有把种子写进运行目录名，所以 `runs/` 下无法从目录名看出是哪个种子。这也是本仓库 `data/` 里只能用时间戳标识运行的原因。
 
 ## 2. 读代码时值得注意的地方 / Things worth knowing while reading
 
