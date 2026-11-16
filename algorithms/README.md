@@ -21,24 +21,4 @@ This folder holds one README per algorithm. Code lives in `../code/`, data in `.
 
 The intended order is the one above: DDPG as the starting point, TD3 fixing bias, SAC adding entropy, PPO moving on-policy, then the three diffusion arms.
 
-## 图的约定
-
-七张曲线图用同一个蓝色，方便并排比较。横轴是环境步数，纵轴是验证回报，阴影带是该算法四次以内各种子的最小到最大范围。图题与图例都写了训练次数，例如 `SAC · 3 runs` 与 `SAC (n=3)`。
-
-All seven curves share one blue so they can be compared side by side. The band is the seed min to max, and the run count appears in both the title and the legend.
-
-重绘命令：
-
-```powershell
-python tools\plot_curves.py --data data --out figures\curves
-```
-
-## 其他实验去哪了
-
-消融、学习率、规模与密度三类实验不在这个目录，按原来的编号放在上层：`../09-ablation/`、`../10-tuning/`、`../11-scale-density/`。它们比较的是同一算法族内部的两个版本，读之前先看 [../09-ablation/README.md](../09-ablation/README.md) 的说明。
-
-The ablation, learning-rate and scale experiments stay in `../09-ablation/`, `../10-tuning/` and `../11-scale-density/`, because they compare two variants of one family rather than standing on their own.
-
----
-
 返回总目录：[../README.md](../README.md)　背景与定义：[../00-problem/README.md](../00-problem/README.md)　数字出处：[../docs/FACTS.md](../docs/FACTS.md)
