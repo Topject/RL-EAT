@@ -66,15 +66,17 @@ These notes try to explain why it did not. Each of the 15 chapters can be checke
 
 ### 第二部分：一步只加一个机制
 
-| 章 | 算法 | 相比上一章多了什么 | 结果 |
+七篇 README 都放在 [lgorithms/](algorithms/README.md)。序号沿用原来的阅读顺序，第 02 到 08 指故事线里的次序，文件夹本身不再按序号命名。
+
+| 序 | 算法 | 相比上一章多了什么 | 结果 |
 |---|---|---|---|
-| [02](02-ddpg/README.md) | DDPG | 起点，确定性 actor-critic | 180.4 ± 8.6 |
-| [03](03-td3/README.md) | TD3 | 双 critic 与延迟更新 | 181.3 ± 8.3 |
-| [04](04-sac/README.md) | SAC | 熵正则，随机策略 | 184.3 ± 2.5 |
-| [05](05-ppo/README.md) | PPO | on-policy 裁剪目标 | 185.2 ± 2.0，用了 2.5 倍步数 |
-| [06](06-d2sac/README.md) | D2SAC | 动作头换成 DDPM 去噪 | 159.5 ± 4.0 |
-| [07](07-dppo/README.md) | DPPO | 扩散特征加 PPO | 185.6 ± 1.0，2.4 倍步数 |
-| [08](08-eat/README.md) | **EAT** | 交叉注意力、DDIM、可学习 η | 177.7 ± 16.5 |
+| [02](algorithms/DDPG-README.md) | DDPG | 起点，确定性 actor-critic | 180.4 ± 8.6 |
+| [03](algorithms/TD3-README.md) | TD3 | 双 critic 与延迟更新 | 181.3 ± 8.3 |
+| [04](algorithms/SAC-README.md) | SAC | 熵正则，随机策略 | 184.3 ± 2.5 |
+| [05](algorithms/PPO-README.md) | PPO | on-policy 裁剪目标 | 185.2 ± 2.0，用了 2.5 倍步数 |
+| [06](algorithms/D2SAC-README.md) | D2SAC | 动作头换成 DDPM 去噪 | 159.5 ± 4.0 |
+| [07](algorithms/DPPO-README.md) | DPPO | 扩散特征加 PPO | 185.6 ± 1.0，2.4 倍步数 |
+| [08](algorithms/EAT-README.md) | **EAT** | 交叉注意力、DDIM、可学习 η | 177.7 ± 16.5 |
 
 ### 第三部分：把机制拆开看
 
@@ -97,7 +99,9 @@ These notes try to explain why it did not. Each of the 15 chapters can be checke
 ## 4. 怎么读这个仓库
 
 ```
-00-problem/ … 14-audit/       15 个按顺序读的章节，中英双语
+00-problem/ 01-heuristics/    舞台与定义
+09-ablation/ … 14-audit/      消融、调参、规模、物理侧、总结、审计
+algorithms/                   七个算法的单篇 README，SAC-README 等
 code/eat-train/               训练侧源码快照，含 14 个 trainer
 code/eat-server/              推理服务侧源码快照
 data/<campaign>/<algo>/<run>/ 每次训练一条：curves.csv 加 run.json

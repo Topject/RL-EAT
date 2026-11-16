@@ -1,7 +1,7 @@
 # 08 EAT, 可学习 η 的 DDIM 动作头 + 双注意力
 # 08 EAT, a DDIM action head with a learned η, plus dual attention
 
-> 上一章 / previous：[07 DPPO](../07-dppo/README.md) · 下一章 / next：[09 消融](../09-ablation/README.md)
+> 上一章 / previous：[07 DPPO](DPPO-README.md) · 下一章 / next：[09 消融](../09-ablation/README.md)
 
 ## 0. 中英摘要 / Abstract
 
@@ -165,4 +165,4 @@ python scripts\sac_dica_train.py    # 未验证：本仓库没有在干净环境
 
 ---
 
-上一章 / previous：[07 DPPO](../07-dppo/README.md) · 下一章 / next：[09 消融](../09-ablation/README.md) · 返回目录 / index: [README](../README.md)
+上一章 / previous：[07 DPPO](DPPO-README.md) · 下一章 / next：[09 消融](../09-ablation/README.md) · 返回目录 / index: [README](../README.md) · 算法目录：[algorithms/](README.md)

@@ -13,13 +13,13 @@ This is the repository's single training-data root. Every chapter's "training da
 
 | 算法 | 主对比（Figure 6）| 其他实验 | 对应章节 |
 |---|---|---|---|
-| **DDPG** | [`fig6-main/ddpg/`](fig6-main/ddpg/) | [`fallback-rerun/ddpg/`](fallback-rerun/ddpg/) | [02](../02-ddpg/README.md) |
-| **TD3** | [`fig6-main/td3/`](fig6-main/td3/) | [`fallback-rerun/td3/`](fallback-rerun/td3/) · [`learning-rate/td33e/`](learning-rate/td33e/) | [03](../03-td3/README.md) |
-| **SAC** | [`fig6-main/sac/`](fig6-main/sac/) | [`fallback-rerun/sac/`](fallback-rerun/sac/) · [`scale-density-z/sac/`](scale-density-z/sac/) | [04](../04-sac/README.md) |
-| **PPO** | [`fig6-main/ppo/`](fig6-main/ppo/) | [`fallback-rerun/ppo/`](fallback-rerun/ppo/) · [`scale-density-z/ppo/`](scale-density-z/ppo/) | [05](../05-ppo/README.md) |
-| **D2SAC** | [`fig6-main/d2sac/`](fig6-main/d2sac/) | [`fallback-rerun/d2sac/`](fallback-rerun/d2sac/) · [`learning-rate/d2sac3e/`](learning-rate/d2sac3e/) · [`trials/d2sac/`](trials/d2sac/) | [06](../06-d2sac/README.md) |
-| **DPPO** | [`fig6-main/dppo/`](fig6-main/dppo/) | [`fallback-rerun/dppo/`](fallback-rerun/dppo/) | [07](../07-dppo/README.md) |
-| **EAT** | [`fig6-main/eat/`](fig6-main/eat/) | [`fallback-rerun/eat/`](fallback-rerun/eat/) · [`learning-rate/eat3e/`](learning-rate/eat3e/) · [`trials/eat/`](trials/eat/) · [`trials/tryeat/`](trials/tryeat/) · [`scale-density-z/eat/`](scale-density-z/eat/) | [08](../08-eat/README.md) |
+| **DDPG** | [`fig6-main/ddpg/`](fig6-main/ddpg/) | [`fallback-rerun/ddpg/`](fallback-rerun/ddpg/) | [02](../algorithms/DDPG-README.md) |
+| **TD3** | [`fig6-main/td3/`](fig6-main/td3/) | [`fallback-rerun/td3/`](fallback-rerun/td3/) · [`learning-rate/td33e/`](learning-rate/td33e/) | [03](../algorithms/TD3-README.md) |
+| **SAC** | [`fig6-main/sac/`](fig6-main/sac/) | [`fallback-rerun/sac/`](fallback-rerun/sac/) · [`scale-density-z/sac/`](scale-density-z/sac/) | [04](../algorithms/SAC-README.md) |
+| **PPO** | [`fig6-main/ppo/`](fig6-main/ppo/) | [`fallback-rerun/ppo/`](fallback-rerun/ppo/) · [`scale-density-z/ppo/`](scale-density-z/ppo/) | [05](../algorithms/PPO-README.md) |
+| **D2SAC** | [`fig6-main/d2sac/`](fig6-main/d2sac/) | [`fallback-rerun/d2sac/`](fallback-rerun/d2sac/) · [`learning-rate/d2sac3e/`](learning-rate/d2sac3e/) · [`trials/d2sac/`](trials/d2sac/) | [06](../algorithms/D2SAC-README.md) |
+| **DPPO** | [`fig6-main/dppo/`](fig6-main/dppo/) | [`fallback-rerun/dppo/`](fallback-rerun/dppo/) | [07](../algorithms/DPPO-README.md) |
+| **EAT** | [`fig6-main/eat/`](fig6-main/eat/) | [`fallback-rerun/eat/`](fallback-rerun/eat/) · [`learning-rate/eat3e/`](learning-rate/eat3e/) · [`trials/eat/`](trials/eat/) · [`trials/tryeat/`](trials/tryeat/) · [`scale-density-z/eat/`](scale-density-z/eat/) | [08](../algorithms/EAT-README.md) |
 
 消融臂 / ablation arms（[09](../09-ablation/README.md)）：[`ablation/sac_ca/`](ablation/sac_ca/) · [`ablation/d2sac_sa/`](ablation/d2sac_sa/) · [`ablation/eat_ca/`](ablation/eat_ca/)
 

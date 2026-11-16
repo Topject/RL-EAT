@@ -1,7 +1,7 @@
 # 05 PPO, on-policy 裁剪目标，以及一个必须先说清的预算差
 # 05 PPO, the clipped on-policy objective, and a budget gap that has to come first
 
-> 上一章 / previous：[04 SAC](../04-sac/README.md) · 下一章 / next：[06 D2SAC](../06-d2sac/README.md)
+> 上一章 / previous：[04 SAC](SAC-README.md) · 下一章 / next：[06 D2SAC](D2SAC-README.md)
 
 ## 0. 中英摘要 / Abstract
 
@@ -143,4 +143,4 @@ python scripts\ppo_train.py
 
 ---
 
-上一章 / previous：[04 SAC](../04-sac/README.md) · 下一章 / next：[06 D2SAC](../06-d2sac/README.md) · 返回目录 / index: [README](../README.md)
+上一章 / previous：[04 SAC](SAC-README.md) · 下一章 / next：[06 D2SAC](D2SAC-README.md) · 返回目录 / index: [README](../README.md) · 算法目录：[algorithms/](README.md)

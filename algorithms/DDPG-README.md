@@ -1,7 +1,7 @@
 # 02 DDPG, 把"选哪个任务、用几步"交给一个确定性 actor-critic
 # 02 DDPG, handing "which task, how many steps" to a deterministic actor-critic
 
-> 上一章 / previous：[01 非学习基线](../01-heuristics/README.md) · 下一章 / next：[03 TD3](../03-td3/README.md)
+> 上一章 / previous：[01 非学习基线](../01-heuristics/README.md) · 下一章 / next：[03 TD3](TD3-README.md)
 
 ## 0. 中英摘要 / Abstract
 
@@ -93,7 +93,7 @@ DDPG is the weakest of the three off-policy arms (180.4 < 181.3 < 184.3), and in
 ![Figure 6 复现的终点回报（柱为均值，须为 +1 标准差，纵轴从 140 起）](../figures/curves/fig6_final_bar.png)
 
 - DDPG 是四条学习型基线里最低的一条，而且和 SAC 差 3.9（184.3 − 180.4，算术）、和 PPO 差 4.8（185.2 − 180.4，算术）。
-- **PPO 那一行不能直接比**：它的环境步数是 336,000 的约 2.5 倍（849,149 / 336,000，算术），详见 [05 PPO](../05-ppo/README.md)。DDPG 与 TD3、SAC 才是同预算的三条。
+- **PPO 那一行不能直接比**：它的环境步数是 336,000 的约 2.5 倍（849,149 / 336,000，算术），详见 [05 PPO](PPO-README.md)。DDPG 与 TD3、SAC 才是同预算的三条。
 - 柱状图的纵轴从 140 起，视觉上 180.4 和 185.2 的差距被放大了；真实差距就是个位数（算术），不要按图形高度理解。
 
 ## 6. 简要分析 / Analysis
@@ -133,4 +133,4 @@ python scripts\ddpg_train.py
 
 ---
 
-上一章 / previous：[01 非学习基线](../01-heuristics/README.md) · 下一章 / next：[03 TD3](../03-td3/README.md) · 返回目录 / index: [README](../README.md)
+上一章 / previous：[01 非学习基线](../01-heuristics/README.md) · 下一章 / next：[03 TD3](TD3-README.md) · 返回目录 / index: [README](../README.md) · 算法目录：[algorithms/](README.md)

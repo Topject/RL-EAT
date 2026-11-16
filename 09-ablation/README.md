@@ -1,7 +1,7 @@
 # 09 消融, 每个机制到底贡献了多少
 # 09 Ablation, what each mechanism actually contributes
 
-> 上一章 / previous：[08 EAT](../08-eat/README.md) · 下一章 / next：[10 调参](../10-tuning/README.md)
+> 上一章 / previous：[08 EAT](../algorithms/EAT-README.md) · 下一章 / next：[10 调参](../10-tuning/README.md)
 
 ## 0. 中英摘要 / Abstract
 
@@ -142,4 +142,4 @@ python scripts\sac_d_train.py     # -> trainer.dsac   (D2SAC-SA)
 
 ---
 
-上一章 / previous：[08 EAT](../08-eat/README.md) · 下一章 / next：[10 调参](../10-tuning/README.md) · 返回目录 / index: [README](../README.md)
+上一章 / previous：[08 EAT](../algorithms/EAT-README.md) · 下一章 / next：[10 调参](../10-tuning/README.md) · 返回目录 / index: [README](../README.md)

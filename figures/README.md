@@ -21,18 +21,20 @@ python tools\plot_curves.py --data data --out figures\curves
 |---|---|---|
 | `fig6_convergence.png` | 七个算法，3 个种子的均值 ± 种子带，横轴环境步数 | [README](../README.md)、[13](../13-results/README.md) |
 | `fig6_final_bar.png` | 终点回报柱状 + 标准差须（纵轴从 140 起，注意） | [13](../13-results/README.md) |
-| `fig6_eta.png` | EAT 学到的 DDIM η 轨迹（3 个种子） | [08](../08-eat/README.md)、[13](../13-results/README.md) |
-| `ddpg_convergence.png` | DDPG 三次运行 + 均值 | [02](../02-ddpg/README.md) |
-| `td3_convergence.png` | TD3 | [03](../03-td3/README.md) |
-| `sac_convergence.png` | SAC | [04](../04-sac/README.md) |
-| `ppo_convergence.png` | PPO | [05](../05-ppo/README.md) |
-| `d2sac_convergence.png` | D2SAC | [06](../06-d2sac/README.md) |
-| `dppo_convergence.png` | DPPO | [07](../07-dppo/README.md) |
-| `eat_convergence.png` | EAT | [08](../08-eat/README.md) |
+| `fig6_eta.png` | EAT 学到的 DDIM η 轨迹（3 个种子） | [08](../algorithms/EAT-README.md)、[13](../13-results/README.md) |
+| `ddpg_convergence.png` | DDPG 三次运行 + 均值 | [02](../algorithms/DDPG-README.md) |
+| `td3_convergence.png` | TD3 | [03](../algorithms/TD3-README.md) |
+| `sac_convergence.png` | SAC | [04](../algorithms/SAC-README.md) |
+| `ppo_convergence.png` | PPO | [05](../algorithms/PPO-README.md) |
+| `d2sac_convergence.png` | D2SAC | [06](../algorithms/D2SAC-README.md) |
+| `dppo_convergence.png` | DPPO | [07](../algorithms/DPPO-README.md) |
+| `eat_convergence.png` | EAT | [08](../algorithms/EAT-README.md) |
 | `ablation.png` | SAC / SAC-CA、D2SAC / D2SAC-SA、EAT / EAT-CA 三对 | [09](../09-ablation/README.md) |
 | `learning_rate.png` | 3e-4 支路 vs 主对比（1e-4） | [10](../10-tuning/README.md) |
 | `fallback_rerun.png` | fallback 环境修正后的第二次全量扫描 | [10](../10-tuning/README.md) |
 | `scale_density.png` | 32 节点、四档质量比的 SAC / EAT | [11](../11-scale-density/README.md) |
+
+七个算法的单篇曲线图统一用同一个蓝色（RGB 31,119,180），图题与图例都标了训练次数，例如 SAC · 3 runs 与 SAC (n=3)，方便并排比较。
 
 画图约定：`test/reward` 先丢掉"更新前评估"的冷启动点，再做 `EMA(0.25)`；阴影带是该算法各种子的 min/max；每条曲线在它自己的步数预算处结束（不同算法的预算不同，见 FACTS §1）。
 

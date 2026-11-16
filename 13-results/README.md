@@ -119,13 +119,13 @@ English: this chapter merges the readings of chapters 01–12 into one table and
 |---|---|---|
 | [00](../00-problem/README.md) | 问题与舞台 | 无训练数据；环境与奖励定义在 `code/eat-train/env/` |
 | [01](../01-heuristics/README.md) | FIFO / Random / Greedy | 无训练数据；评估表是作者手工抄录（`docs/FACTS.md` §7） |
-| [02](../02-ddpg/README.md) | DDPG | [`data/fig6-main/ddpg/`](../data/fig6-main/ddpg/) |
-| [03](../03-td3/README.md) | TD3 | [`data/fig6-main/td3/`](../data/fig6-main/td3/) |
-| [04](../04-sac/README.md) | SAC | [`data/fig6-main/sac/`](../data/fig6-main/sac/) |
-| [05](../05-ppo/README.md) | PPO | [`data/fig6-main/ppo/`](../data/fig6-main/ppo/) |
-| [06](../06-d2sac/README.md) | D2SAC | [`data/fig6-main/d2sac/`](../data/fig6-main/d2sac/) |
-| [07](../07-dppo/README.md) | DPPO | [`data/fig6-main/dppo/`](../data/fig6-main/dppo/) |
-| [08](../08-eat/README.md) | EAT | [`data/fig6-main/eat/`](../data/fig6-main/eat/) |
+| [02](../algorithms/DDPG-README.md) | DDPG | [`data/fig6-main/ddpg/`](../data/fig6-main/ddpg/) |
+| [03](../algorithms/TD3-README.md) | TD3 | [`data/fig6-main/td3/`](../data/fig6-main/td3/) |
+| [04](../algorithms/SAC-README.md) | SAC | [`data/fig6-main/sac/`](../data/fig6-main/sac/) |
+| [05](../algorithms/PPO-README.md) | PPO | [`data/fig6-main/ppo/`](../data/fig6-main/ppo/) |
+| [06](../algorithms/D2SAC-README.md) | D2SAC | [`data/fig6-main/d2sac/`](../data/fig6-main/d2sac/) |
+| [07](../algorithms/DPPO-README.md) | DPPO | [`data/fig6-main/dppo/`](../data/fig6-main/dppo/) |
+| [08](../algorithms/EAT-README.md) | EAT | [`data/fig6-main/eat/`](../data/fig6-main/eat/) |
 | [09](../09-ablation/README.md) | 消融 | [`data/ablation/`](../data/ablation/)（`sac_ca` / `d2sac_sa` / `eat_ca`） |
 | [10](../10-tuning/README.md) | 调参 | [`data/learning-rate/`](../data/learning-rate/) + [`data/fallback-rerun/`](../data/fallback-rerun/) |
 | [11](../11-scale-density/README.md) | 规模与密度 | [`data/scale-density-z/`](../data/scale-density-z/) |

@@ -113,13 +113,13 @@ The paper's two arguments map onto the code:
 
 | 算法 | 一句话定位 | 参数量（总/在线） | 章节 |
 |---|---|---|---|
-| DDPG | 确定性 actor-critic，无熵 | 349,704 / 174,852 | [02](../02-ddpg/README.md) |
-| TD3 | 双 critic + 延迟更新 | 524,810 / 262,405 | [03](../03-td3/README.md) |
-| SAC | 最大熵正则 | 437,511 / 262,405 | [04](../04-sac/README.md) |
-| PPO | on-policy 裁剪 | 611,336 / 611,336 | [05](../05-ppo/README.md) |
-| D2SAC | DDPM 动作头 | 422,135 / 254,229 | [06](../06-d2sac/README.md) |
-| DPPO | 扩散特征 + PPO | 519,238 / 519,238 | [07](../07-dppo/README.md) |
-| EAT | 交叉注意力 + DDIM + 可学习 η | 709,560 / 397,942 | [08](../08-eat/README.md) |
+| DDPG | 确定性 actor-critic，无熵 | 349,704 / 174,852 | [02](../algorithms/DDPG-README.md) |
+| TD3 | 双 critic + 延迟更新 | 524,810 / 262,405 | [03](../algorithms/TD3-README.md) |
+| SAC | 最大熵正则 | 437,511 / 262,405 | [04](../algorithms/SAC-README.md) |
+| PPO | on-policy 裁剪 | 611,336 / 611,336 | [05](../algorithms/PPO-README.md) |
+| D2SAC | DDPM 动作头 | 422,135 / 254,229 | [06](../algorithms/D2SAC-README.md) |
+| DPPO | 扩散特征 + PPO | 519,238 / 519,238 | [07](../algorithms/DPPO-README.md) |
+| EAT | 交叉注意力 + DDIM + 可学习 η | 709,560 / 397,942 | [08](../algorithms/EAT-README.md) |
 
 参数量由 `tools/ckpt_inventory.py` 直接读 `policy_best.pth` 的张量名与元素数得到，不依赖 torch。
 

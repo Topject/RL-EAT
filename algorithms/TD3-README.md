@@ -1,7 +1,7 @@
 # 03 TD3, 双 critic 压掉过估计，但压不掉方差
 # 03 TD3, twin critics kill overestimation, not variance
 
-> 上一章 / previous：[02 DDPG](../02-ddpg/README.md) · 下一章 / next：[04 SAC](../04-sac/README.md)
+> 上一章 / previous：[02 DDPG](DDPG-README.md) · 下一章 / next：[04 SAC](SAC-README.md)
 
 ## 0. 中英摘要 / Abstract
 
@@ -91,7 +91,7 @@ Twin critics lifted the best run, not the worst one, and the 2.44 s / quality 0.
 - **最高回报这一列 TD3 赢了三条 off-policy 臂**：191.1 > 189.9（SAC）> 187.3（DDPG）。这与"双 critic 压制过估计 → 找到更高的峰值"的预期一致（推断 / inferred）。
 - **均值这一列只赢了 DDPG 0.9**（181.3 − 180.4，算术），而 SAC 比它高 3.0（184.3 − 181.3，算术）。
 - **方差这一列几乎没变**：8.3 对 DDPG 的 8.6（算术），比 SAC 的 2.5 高出一大截。
-- PPO 那一行步数约 2.5 倍（849,149 / 336,000，算术），不参与同预算比较，见 [05 PPO](../05-ppo/README.md)。
+- PPO 那一行步数约 2.5 倍（849,149 / 336,000，算术），不参与同预算比较，见 [05 PPO](PPO-README.md)。
 
 ## 6. 简要分析 / Analysis
 
@@ -130,4 +130,4 @@ python scripts\td3_train.py
 
 ---
 
-上一章 / previous：[02 DDPG](../02-ddpg/README.md) · 下一章 / next：[04 SAC](../04-sac/README.md) · 返回目录 / index: [README](../README.md)
+上一章 / previous：[02 DDPG](DDPG-README.md) · 下一章 / next：[04 SAC](SAC-README.md) · 返回目录 / index: [README](../README.md) · 算法目录：[algorithms/](README.md)

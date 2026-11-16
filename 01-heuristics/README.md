@@ -1,7 +1,7 @@
 # 01 非学习基线, 不训练能做到什么程度
 # 01 Heuristics, how far do you get without learning
 
-> 上一章 / previous：[00 问题与舞台](../00-problem/README.md) · 下一章 / next：[02 DDPG](../02-ddpg/README.md)
+> 上一章 / previous：[00 问题与舞台](../00-problem/README.md) · 下一章 / next：[02 DDPG](../algorithms/DDPG-README.md)
 
 ## 0. 中英摘要 / Abstract
 
@@ -132,4 +132,4 @@ python scripts\eval_greedy.py       # GREEDY：10x8 网格 + preview_reward
 
 ---
 
-上一章 / previous：[00 问题与舞台](../00-problem/README.md) · 下一章 / next：[02 DDPG](../02-ddpg/README.md) · 返回目录 / index: [README](../README.md)
+上一章 / previous：[00 问题与舞台](../00-problem/README.md) · 下一章 / next：[02 DDPG](../algorithms/DDPG-README.md) · 返回目录 / index: [README](../README.md)

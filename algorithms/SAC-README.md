@@ -1,7 +1,7 @@
 # 04 SAC, 熵正则把三条 off-policy 的方差压下来
 # 04 SAC, entropy regularisation is what finally shrinks the spread
 
-> 上一章 / previous：[03 TD3](../03-td3/README.md) · 下一章 / next：[05 PPO](../05-ppo/README.md)
+> 上一章 / previous：[03 TD3](TD3-README.md) · 下一章 / next：[05 PPO](PPO-README.md)
 
 ## 0. 中英摘要 / Abstract
 
@@ -93,7 +93,7 @@ The peak is slightly lower (189.9 < 191.1), so entropy buys stability rather tha
 - **均值**：SAC 是三条同预算 off-policy 臂里最高的（184.3），比 TD3 高 3.0、比 DDPG 高 3.9（算术）。
 - **方差**：2.5 对 8.3 / 8.6（算术）。这是本章唯一一个"结构性差别对应结构性结果"的地方。
 - **峰值**：189.9 低于 TD3 的 191.1（算术：差 1.2），说明熵项并没有把最好的那次推得更高。
-- PPO 那一行步数约 2.5 倍（849,149 / 336,000，算术），不参与同预算比较，见 [05 PPO](../05-ppo/README.md)。
+- PPO 那一行步数约 2.5 倍（849,149 / 336,000，算术），不参与同预算比较，见 [05 PPO](PPO-README.md)。
 - **和 §7 面板的关系**：`docs/FACTS.md` §7 里 SAC 是 28.72 s / 质量 0.556。比 FIFO（35.54 s / 0.707）快 6.8 s 但质量低 0.151（算术）。也就是说学习型策略在这里是"用更少推理步换更短队列"，不是"两列都赢"（推断 / inferred：与 reward 里 0.600 的质量权重一致，策略停在质量与工期的折中点）。
 
 ## 6. 简要分析 / Analysis
@@ -133,4 +133,4 @@ python scripts\sac_train.py
 
 ---
 
-上一章 / previous：[03 TD3](../03-td3/README.md) · 下一章 / next：[05 PPO](../05-ppo/README.md) · 返回目录 / index: [README](../README.md)
+上一章 / previous：[03 TD3](TD3-README.md) · 下一章 / next：[05 PPO](PPO-README.md) · 返回目录 / index: [README](../README.md) · 算法目录：[algorithms/](README.md)

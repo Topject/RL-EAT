@@ -1,7 +1,7 @@
 # 06 D2SAC, 用扩散动作头替换高斯 actor
 # 06 D2SAC, a diffusion action head instead of a Gaussian actor
 
-> 上一章 / previous：[05 PPO](../05-ppo/README.md) · 下一章 / next：[07 DPPO](../07-dppo/README.md)
+> 上一章 / previous：[05 PPO](PPO-README.md) · 下一章 / next：[07 DPPO](DPPO-README.md)
 
 ## 0. 中英摘要 / Abstract
 
@@ -149,4 +149,4 @@ python scripts\sac_d_train.py     # 文档标注为 D2SAC（DDPM）入口；实�
 
 ---
 
-上一章 / previous：[05 PPO](../05-ppo/README.md) · 下一章 / next：[07 DPPO](../07-dppo/README.md) · 返回目录 / index: [README](../README.md)
+上一章 / previous：[05 PPO](PPO-README.md) · 下一章 / next：[07 DPPO](DPPO-README.md) · 返回目录 / index: [README](../README.md) · 算法目录：[algorithms/](README.md)

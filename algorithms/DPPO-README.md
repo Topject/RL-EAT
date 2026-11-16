@@ -1,7 +1,7 @@
 # 07 DPPO, 把扩散去噪网络接到 PPO 的 actor 与 critic 前面
 # 07 DPPO, a denoising backbone behind a PPO actor/critic
 
-> 上一章 / previous：[06 D2SAC](../06-d2sac/README.md) · 下一章 / next：[08 EAT](../08-eat/README.md)
+> 上一章 / previous：[06 D2SAC](D2SAC-README.md) · 下一章 / next：[08 EAT](EAT-README.md)
 
 ## 0. 中英摘要 / Abstract
 
@@ -150,4 +150,4 @@ English: chapter 07 keeps the Gaussian policy but puts a `Diffusion` denoiser in
 
 ---
 
-上一章 / previous：[06 D2SAC](../06-d2sac/README.md) · 下一章 / next：[08 EAT](../08-eat/README.md) · 返回目录 / index: [README](../README.md)
+上一章 / previous：[06 D2SAC](D2SAC-README.md) · 下一章 / next：[08 EAT](EAT-README.md) · 返回目录 / index: [README](../README.md) · 算法目录：[algorithms/](README.md)
