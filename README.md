@@ -89,7 +89,7 @@ These notes try to explain why it did not. Each of the 15 chapters can be checke
 | 章 | 内容 | 一句话结论 |
 |---|---|---|
 | [12](12-server/README.md) | EAT-Server 与 Stable Diffusion 物理执行 | 仿真里任务等于一段固定执行时间，物理侧才是真实的 SD 推理。本仓库没有物理日志，只记录实现路径 |
-| [13](13-results/README.md) | 汇总、论文排序对比、下一步 | 复现到的是机制方向，没复现到的是名次 |
+| [13](13-results/README.md) | 汇总与论文排序对比 | 复现到的是机制方向，没复现到的是名次 |
 | [14](14-audit/README.md) | **实现审计**：七处会改变结论的问题 | 没有全局种子、critic 不对称、熵项被置零、actor 不做 tanh、ReLU 与 Mish 不符、快照跑不起来、配置漂移。其中三处有代码之外的物证 |
 
 ---
@@ -118,7 +118,7 @@ tools/                        解析、清洗、绘图、取证、链接检查
 1. 只想看结论，去第 2 节和 [13-results](13-results/README.md)。
 2. 想学机制，从 [00-problem](00-problem/README.md) 按编号读到 [09](09-ablation/README.md)。想知道这份实现能不能信，直接看 [14-audit](14-audit/README.md)。
 3. 想核数字，看 [docs/FACTS.md](docs/FACTS.md)，数据本体在 `data/`。想看这段复现真实发生了什么，读 [docs/STORY.md](docs/STORY.md)。
-4. 想问这段工作证明了什么，也就是导师或面试官视角，读本文件第 7 到 9 节。
+4. 想问这段工作证明了什么，也就是导师或面试官视角，读本文件第 7 到 9 节。多智能体扩展单列在 [docs/MARL.md](docs/MARL.md)。
 
 ---
 
@@ -167,7 +167,7 @@ python tools\plot_curves.py   --data data --out figures\curves
 
 ## 7. 这段工作证明了什么
 
-它大概不能证明我跑通了代码，更像一次独立的实现审计，附带对下一步该验证什么的判断。下面这张表给看结果的人准备，每一行都能点开核对。
+它大概不能证明我跑通了代码，更像一次独立的实现审计。下面这张表给看结果的人准备，每一行都能点开核对。
 
 It is less a demo that the code runs and more an independent audit, with an opinion about what to verify next. Every row below is checkable inside this repository.
 
@@ -177,7 +177,7 @@ It is less a demo that the code runs and more an independent audit, with an opin
 | 工程化与可复算 | 数据管线从解析到清洗到绘图，checkpoint 取证不装 torch 也能读张量名与参数量，双语 15 章，链接自检脚本 | `tools/`、[`docs/DATA.md`](docs/DATA.md) |
 | 怀疑与定位 | 名次不复现时没有停在辩解上，定位到七处实现层原因，按证据强弱分成 E3、E2、E1 三级 | [`14`](14-audit/README.md) |
 | 边界意识 | 主动标注 D2SAC 是重建实现，本地代码已改过，物理侧没有数据，快照与训练版本不一致 | [`14`](14-audit/README.md) 第 1、2、4 节 |
-| 成本与风险判断 | 下一步给的是 22 次训练的最小闭环，附停止条件 | 本文件第 9 节 |
+| 跨协议扩展经验 | 另做过一版多智能体扩展，三集群 14 个算法、五集群 5 个算法，合计 170 次正式训练 | [docs/MARL.md](docs/MARL.md) |
 
 ---
 
@@ -190,7 +190,7 @@ It is less a demo that the code runs and more an independent audit, with an opin
 - **EAT 论文复现与实现审计**（独立完成）
   复现 TMC 投稿算法 EAT 与六个基线，7 算法 × 3 种子共 88 次训练。自建 TensorBoard 日志解析、清洗、绘图管线，零第三方绘图依赖，曲线可逐点复算。
 - 发现论文排名不可复现，定位到七处实现层原因，包括全局种子缺失、双 critic 结构不对称、扩散策略熵项被置零、actor 越界无约束。证据强度分级为权重级、代码级与转述级。
-- 设计三组受控实验（种子确定性、critic 对称化、熵项恢复，约 22 次训练），把代码级证据升级为因果结论，并给出停止条件。产物是开源双语仓库，15 章加数据管线与校验工具。
+- 产物是开源双语仓库，15 章加数据管线与校验工具。此外做过一版多智能体连续动作扩展，三集群 14 个算法 × 5 种子、五集群 5 个算法 × 5 种子，合计 170 次正式训练。
 
 **English**
 
@@ -207,19 +207,20 @@ It is less a demo that the code runs and more an independent audit, with an opin
 
 ---
 
-## 9. 下一步：两周最小闭环
+## 9. 多做的一层：多智能体扩展
 
-先修 `trainer/dcasac` 的 `schedule_timesteps` 笔误，让快照能跑，见 [`14`](14-audit/README.md) 的 A6。之后做三组对照。
+EAT 复现之外，我还把单集群调度改成过多智能体连续动作的版本。这块不进上面的主表，但工作量可以数。
 
-| # | 对照 | 产出 | 成本 |
-|---|---|---|---|
-| 1 | 设种子后同配置跑两次，逐位比较曲线 | 一个可复现的地基，成本最低，说服力最高 | 2 次训练 |
-| 2 | critic 对称化前后各 5 种子，EAT | 少一层是否改变均值与方差 | 10 次训练 |
-| 3 | D2SAC 恢复熵项与自动温度前后各 5 种子 | D2SAC 垫底有多少来自实现 | 10 次训练 |
+| 组 | 内容 | 训练次数 | 每臂步数 |
+|---|---|---:|---:|
+| 正式三集群 `formal_a` 与 `formal_b` | 14 个学习算法 × 5 个种子 | 70 | 30,000 agent steps |
+| 五算法扫描（三集群） | 5 算法 × 4 组配置 × 3 种子，另有追加种子 | 75 | 30,000 |
+| 五集群扩展 | 5 个算法 × 5 个种子 | 25 | 150,000 |
 
-停止条件也先写下来。若第 2 组的均值差小于 3 分，方差也没有明显变化，这条线就不再追加实验，只作为实现细节不影响主结论的负结果保留。
+合计 170 次正式训练，另留 210 个 checkpoint。算法清单、协议差异、哪些数字适合写进材料，都在 [docs/MARL.md](docs/MARL.md)。
+调参与冒烟运行没有计入，也不建议在任何材料里引用。
 
-不建议做的两件事。第一是把这条线扩成正式投稿，算法本身没有新增贡献。第二是拿现有 PPO 实现去搭 MAPPO，那大概会把 A4、A5、A1 三处问题一起放大，见 [`14`](14-audit/README.md) 与 [docs/REPRODUCE.md](docs/REPRODUCE.md) 第 3 节。
+The multi-agent extension is a separate effort: 170 formal training runs across a formal three-cluster comparison, a five-algorithm sweep and a five-cluster extension, plus 210 checkpoints. Details, and which numbers are safe to quote, are in [docs/MARL.md](docs/MARL.md).
 
 ---
 

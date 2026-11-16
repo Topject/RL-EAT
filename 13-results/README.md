@@ -95,7 +95,7 @@ English: this chapter merges the readings of chapters 01–12 into one table and
 
 即便如此，三臂合起来的方向是自洽的：**少参数 + 更好的回报**在 EAT 对 EAT-CA 这一对上成立（709,560 对 775,608，177.7 对 162.8），在 SAC 对 SAC-CA 上勉强成立（参数更少、回报持平），在 D2SAC 对 D2SAC-SA 上不成立（参数更多、回报更低，两败）。所以论文那句"参数更少、效果更好"只能算"部分被支持"。
 
-## 6. 什么是硬的、什么是软的、下一步做什么 / Solid, weak, next
+## 6. 什么是硬的、什么是软的 / Solid and weak
 
 | 结论 | 强度 | 为什么 |
 |---|---|---|
