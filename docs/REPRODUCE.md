@@ -33,27 +33,39 @@ $env:PYTHONPATH = "$PWD\code\eat-train;$PWD\code\eat-train\scripts"
 
 ## 3. 训练 / Training
 
-每个算法有独立的入口脚本（`code/eat-train/scripts/`）：
+每个算法有独立的入口脚本（`code/eat-train/scripts/`）。下表是**逐行读 import 核实**的，不是按文件名猜的：
 
-| 算法 | 训练脚本 | 评估脚本 |
-|---|---|---|
-| DDPG | `ddpg_train.py` | `eval_ddpg.py` |
-| TD3 | `td3_train.py` | `eval_td3.py` |
-| SAC | `sac_train.py` | `eval_sac.py` |
-| PPO | `ppo_train.py` | `eval_ppo.py` |
-| SAC-CA（交叉注意力） | `sac_ca_train.py` | `eval_casac.py` |
-| D2SAC（DDPM） | `sac_d_train.py` | `eval_dcasac.py` |
-| EAT（DDIM + η） | `sac_dica_train.py` | `eval_dsac.py` |
-| 非学习基线 | — | `eval_FIFO.py`、`eval_rand_action.py`、`eval_greedy.py` |
+| 算法 | 训练脚本 | 它真正 import 的 trainer | 评估脚本 | 评估脚本的 `algo_prefix` |
+|---|---|---|---|---|
+| DDPG | `ddpg_train.py` | `trainer.ddpg` | `eval_ddpg.py` | `ddpg` |
+| TD3 | `td3_train.py` | `trainer.td3` | `eval_td3.py` | `td3` |
+| SAC | `sac_train.py` | `trainer.sac` | `eval_sac.py` | `sac` |
+| PPO | `ppo_train.py` | `trainer.ppo` | `eval_ppo.py` | `ppo` |
+| SAC-CA（交叉注意力） | `sac_ca_train.py` | `trainer.casac` | `eval_casac.py` | `sac_ca` |
+| D2SAC-SA（DDPM + 自注意力 Q） | `sac_d_train.py` | `trainer.dsac` | `eval_dsac.py` | `dsac` |
+| EAT（DDIM + η + 交叉注意力） | `sac_dica_train.py` | `trainer.dicasac` | **`eval_dcasac.py`** | `sac_dica` |
+| 主扫描的 D2SAC（`trainer.dcasac`） | **无脚本** | `trainer.dcasac` | **无脚本** | — |
+| 非学习基线 | — | — | `eval_FIFO.py`、`eval_rand_action.py`、`eval_greedy.py` | `fifo` / `rand` / `greedy` |
+
+**名字错位，务必按这张表看**（本快照最容易踩的坑）：
+
+1. `eval_dcasac.py` 的文件名像是 `trainer.dcasac` 的评估脚本，但它 `import` 的是 `trainer.dicasac`、`algo_prefix="sac_dica"` —— 它实际上是 **EAT 的评估脚本**（`eval_dcasac.py#L11`、`#L211`、`#L258`）。
+2. `eval_dsac.py` 才是 `trainer.dsac`（D2SAC-SA）的评估脚本。
+3. `trainer.dcasac` —— 第 06 章由 checkpoint 反推出的主扫描 `d2sac` —— **在快照里既没有训练脚本也没有评估脚本**。第 06 章因此把它的复现命令标为 未记录，而不是贴一条假命令。
+
+**脚本常量与主扫描不一致**：四个训练脚本都写死了 `set_global_config(node_num=64, max_visible_tasks=8)` 与 `lr = 3e-4`
+（`sac_train.py#L36`、`#L46`；`sac_d_train.py#L49`、`#L59`；`sac_dica_train.py#L35`、`#L44`）。
+作者笔记记录主扫描用 1e-4；本仓库的 3e-4 支路（`learning-rate`）EAT 只有 159.9 ± 2.5，而主扫描 EAT 是 177.7 ± 16.5。
+**所以直接跑这些脚本得到的是"64 节点 + 3e-4"的配置，不是主对比那张表**；要对齐必须先改常量。
 
 ```powershell
 cd code\eat-train
-python scripts\sac_dica_train.py        # 未验证：脚本自身没有 argparse，参数在文件顶部常量里
+python scripts\sac_dica_train.py        # 未验证：脚本没有 argparse，参数在文件顶部常量里
 ```
 
-**注意 / caveat**：这些脚本目前是"改常量再运行"的风格，没有命令行参数（`sac_dica_train.py` 只有 `main()`）。作者当时用的是另一个驱动脚本 `scripts/fig6/train.py`（支持 `--algo eat --epoch 500 --device cuda --seed 43`），**它不在本快照里**，所以本仓库无法复现"一行命令跑一个算法"。
+**注意 / caveat**：这些脚本是"改常量再运行"的风格，没有命令行参数（`sac_dica_train.py` 只有 `main()`）。作者当时用的是另一个驱动脚本 `scripts/fig6/train.py`（支持 `--algo eat --epoch 500 --device cuda --seed 43`），**它不在本快照里**，所以本仓库无法复现"一行命令跑一个算法"。
 
-These scripts are "edit the constants, then run" style and take no CLI arguments; the author's actual driver (`scripts/fig6/train.py`) is not in this snapshot, so the original one-line invocation cannot be reproduced here.
+These scripts are "edit the constants, then run" style and take no CLI arguments. The table above was verified by reading each script's import line, because the file names are cross-wired: `eval_dcasac.py` actually evaluates `trainer.dicasac` (EAT), and nothing in the snapshot trains or evaluates `trainer.dcasac` — the trainer that the chapter-06 checkpoint forensics points to for the main-sweep `d2sac`. Every train script also hardcodes 64 nodes and `lr = 3e-4`, which is not the main-sweep configuration.
 
 ## 4. 输出去哪 / Where outputs land
 

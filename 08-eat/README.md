@@ -110,7 +110,7 @@ English: EAT is the paper's own method — DDIM sampling with a single learned �
 - 但 3 次均值只排第 5；方差 16.5 是七个臂里最大的，比次大的 DDPG（8.6）接近翻倍（算术）。
 - 单次最高终点回报是 TD3 的 **188.59**，不是 EAT；单次最高过程点是 DPPO 的 **193.84**，也不是 EAT（EAT 自己最高 193.54）。
 - 表内"最高回报"一列是逐次峰值的均值（所以 185.3 < 187.17），不是单次最好成绩。
-- 预算 416,000 步介于 off-policy（336,000）与 DPPO（80 万+）之间：对下它有"多跑了 8 万步"的成分（算术 1.24×），对上它又没跑够（算术 2.4×）。
+- 预算 416,000 步介于 off-policy（336,000）与 DPPO（80 万+）之间：对下它有"多跑了 8 万步"的成分（算术 1.24×），对上它只跑了 DPPO 的约 1/2（算术 2.4× 的反方向）—— 所以它既不是同预算对照，也不是被预算亏待。
 - 参数量 709,560 是七个臂里最大的（次大 PPO 611,336，算术：多 98,224）—— 它是"最贵且最不稳定"的一臂。
 
 > EN — EAT's two good seeds average 187.28, above every 3-seed mean in the table, while its 3-seed mean is 5th and its std (16.5) is the largest. The single highest final return is TD3's 188.59 and the single highest best-of-run point is DPPO's 193.84 — neither is EAT. Its budget sits between the off-policy arms and DPPO, and it has the largest parameter count of the seven.
