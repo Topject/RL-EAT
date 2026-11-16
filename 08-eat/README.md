@@ -158,7 +158,7 @@ python scripts\sac_dica_train.py    # 未验证：本仓库没有在干净环境
 
 但有两点必须说清，否则这条命令会被当成"能复现本章的 177.7"：
 
-1. 该脚本默认 `lr = 3e-4`、`set_global_config(node_num=64, max_visible_tasks=8)`；而 `docs/FACTS.md` §8 记的 EAT **主**扫描学习率是 1e-4，3e-4 是另一条支路（§3：EAT @3e-4 = 159.9 ± 2.5）。直接跑它更接近 `learning-rate` 那一组，不是本章这一组。
+1. 该脚本默认 `lr = 3e-4`、`set_global_config(node_num=64, max_visible_tasks=8)`；而 `docs/FACTS.md` §8 记的 EAT **主**扫描学习率是 1e-4，3e-4 是另一条支路（`docs/FACTS.md` §3：EAT @3e-4 = 159.9 ± 2.5）。直接跑它更接近 `learning-rate` 那一组，不是本章这一组。
 2. 它是"改常量再运行"的风格，没有 argparse；作者当时用的驱动脚本 `scripts/fig6/train.py`（支持 `--algo eat --epoch 500 --device cuda --seed 43`）不在快照里，所以主扫描的确切超参与命令：**未记录 / not recorded**（`docs/REPRODUCE.md` §3、§8）。
 
 > EN — The entry point exists and does import `trainer.dicasac`, but its defaults (`lr = 3e-4`, 64 nodes) match the learning-rate branch rather than the 1e-4 main sweep, and the repo never verified it end to end. The author's `scripts/fig6/train.py` is missing, so the exact main-sweep command is **not recorded**.

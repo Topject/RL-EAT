@@ -68,6 +68,7 @@ English: three arms each remove one mechanism from EAT. SAC-CA (Gaussian SAC + c
 2. **SAC-CA 很早就爬到自己的终点水平**（185.50 附近），并且只有 1 次运行 —— 它的形状不能和 3 次的父本做"谁收敛快"的比较。
 3. **D2SAC-SA 与 D2SAC 是同一条低平线**：一个 148.75、一个 159.5 ± 4.0，都在 160 以下，形状都是"早期抬升后走平"。DDPM 这一支无论怎么换 critic，都没有离开那个低盆地。
 4. **图上的横向覆盖不一样**：EAT-CA 的四条曲线在 33.6 万步附近结束，而 EAT 父本的曲线在 41.6 万步处才有最后一个点（`docs/DATA.md` §3 第 1 条：各臂预算不同，曲线在各自预算处结束）。所以"谁后程还在涨"这类观察在跨臂比较里不成立。
+5. **D2SAC-SA 是一次"高开低走"**：它 `run.json` 里的 `test_reward.best_step` 极小（最好的时刻出现在训练最开头），之后整体下滑，终点 148.75 明显低于自己的峰值。这是本章唯一一个"越训越差"的臂，也是"DDPM + 自注意力 critic 这一支学不出东西"的直接画面。
 
 > EN — EAT-CA is the only flat arm (all four runs near 163.83, std 3.6), i.e. removing cross-attention removes the ceiling and the variance together. Both DDPM arms stay in the same low plateau. The arms end at different budgets, so late-training comparisons across arms are not meaningful.
 
@@ -84,6 +85,7 @@ English: three arms each remove one mechanism from EAT. SAC-CA (Gaussian SAC + c
 - **EAT 与 D2SAC-SA**：参数量只差 1（709,560 vs 709,559），回报差得远（177.7 对单次 148.75，算术 28.9），但样本量一边 3 一边 1 —— 这组对比只能当线索。
 - **SAC 与 SAC-CA**：把注意力加到纯高斯 SAC 上，参数反而少了 18,272（算术），回报从 184.3 微升到单次 185.50。用 EAT 的量级看，这属于"没有差别"（`docs/DATA.md` §5：1–2 分都在噪声里）。
 - **D2SAC 与 D2SAC-SA**：在 DDPM 这一支里，把交叉注意力 critic 换成自注意力，参数多了 287,424（算术），回报还掉了（单次 148.75）。
+- **放进七个主臂里看**：SAC-CA 的 185.5 会排在 DPPO（185.6）之后、SAC（184.3）之前；EAT-CA 的 162.8 会排在 D2SAC（159.5）之前、DDPG（180.4）之后。也就是说三个消融臂里，只有 SAC-CA 进入了主对比的"上方集团"，另外两个都在下半区（`docs/FACTS.md` §1 的排序）。
 
 > EN — In every contrast where the sample size allows a statement, removing cross-attention makes the network bigger and the return worse; adding it to plain SAC changes nothing measurable. Two of the four contrasts rest on a single run each.
 

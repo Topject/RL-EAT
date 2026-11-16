@@ -47,7 +47,7 @@ Chapter 06 is the first arm where the policy distribution itself is a diffusion 
 | 质量比 quality_ratio | 未记录 / not recorded（主扫描 `run.json` 的 `variant` 为空，未标注质量比） | — |
 | 种子 | 3 次独立训练；作者笔记记 42 / 120 / 245，**运行目录本身不保存种子** | `docs/FACTS.md` §1 |
 | 预算 | 336,000 步 | `docs/FACTS.md` §1 |
-| 学习率 | 未记录（3e-4 对照支路见 §3：D2SAC @3e-4 = 158.8 ± 3.2） | — |
+| 学习率 | 未记录 / not recorded（3e-4 对照支路见 `docs/FACTS.md` §3：D2SAC @3e-4 = 158.8 ± 3.2） | — |
 | 扩散步数 | 代码默认 5（`trainer/dcasac/trainer.py#L81`）；主扫描实际取值 未记录 | 代码 / — |
 | 网络宽度 | actor/critic 256×256；UNet 256×256；状态嵌入 8 维 | `docs/FACTS.md` §8 |
 | 参数量（总 / 在线） | **422,135 / 254,229** | `docs/FACTS.md` §1 |

@@ -82,7 +82,7 @@ Four parts, 14 ordered projects. Each chapter is a self-contained mini-project w
 | 章 | 内容 | 结论一句话 |
 |---|---|---|
 | [09](09-ablation/README.md) | 消融：SAC-CA / D2SAC-SA / **EAT-CA** | 去掉交叉注意力后参数从 709,560 涨到 775,608，回报从 177.7 掉到 162.8 —— 方向上支持论文"参数更少、效果更好"的说法，但两个消融臂只有 1 次运行 |
-| [10](10-tuning/README.md) | 调参：学习率 3e-4、fallback 重跑 | 3e-4 救不了扩散臂；fallback 重跑把 EAT 的方差从 16.5 压到 2.1，但那一次换的是网络结构 |
+| [10](10-tuning/README.md) | 调参：学习率 3e-4、fallback 重跑 | 3e-4 救不了 D2SAC/TD3；fallback 重跑把 EAT 的方差从 16.5 压到 2.1，但那一次换的是网络结构（3e-4 支路的 EAT 也换了：709,560 → 841,144） |
 | [11](11-scale-density/README.md) | 规模与密度：32 节点 × 4 档质量比 | 跨 quality_ratio 的回报不可比 —— 24 和 180 的差别是奖励函数变了，不是学得更好 |
 
 ### 第四部分｜物理侧与结论 / Part IV — the physical side and the verdict
