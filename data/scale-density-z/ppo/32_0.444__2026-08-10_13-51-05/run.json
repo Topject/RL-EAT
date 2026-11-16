@@ -1,0 +1,32 @@
+{
+  "campaign": "scale-density-z",
+  "variant": "32_0.444",
+  "algorithm": "ppo",
+  "run_id": "2026-08-10_13-51-05",
+  "env_steps": 166723,
+  "test_reward": {
+    "first": 0.29874056577682495,
+    "last": 40.6257209777832,
+    "best": 40.76628494262695,
+    "best_step": 165014,
+    "n": 101
+  },
+  "train_reward_last": 39.2272834777832,
+  "ddim_eta_last": null,
+  "curated_tags": [
+    "save/env_step",
+    "save/epoch",
+    "save/gradient_step",
+    "test/env_step",
+    "test/length",
+    "test/length_std",
+    "test/reward",
+    "test/reward_std",
+    "train/episode",
+    "train/length",
+    "train/reward"
+  ],
+  "source_file": "E:\\Ls\\LearningCorn\\Computer\\AboutScience\\About EAT\\EAT-master\\EATlogs\\z\\A\\EAT-Train\\EAT-Train\\runs\\32_0.444\\ppo\\2026-08-10_13-51-05\\events.out.tfevents.1786341065.LAPTOP-VJ0FCR73.44956.0",
+  "source_mb": 0.06,
+  "path": "data/scale-density-z/ppo/32_0.444__2026-08-10_13-51-05"
+}

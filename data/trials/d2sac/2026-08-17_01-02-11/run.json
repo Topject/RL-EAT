@@ -1,0 +1,35 @@
+{
+  "campaign": "trials",
+  "variant": "",
+  "algorithm": "d2sac",
+  "run_id": "2026-08-17_01-02-11",
+  "env_steps": 67200,
+  "test_reward": {
+    "first": 137.3598175048828,
+    "last": 152.95254516601562,
+    "best": 163.8323974609375,
+    "best_step": 672,
+    "n": 101
+  },
+  "train_reward_last": 151.16244506835938,
+  "ddim_eta_last": null,
+  "curated_tags": [
+    "save/env_step",
+    "save/epoch",
+    "save/gradient_step",
+    "test/env_step",
+    "test/length",
+    "test/length_std",
+    "test/reward",
+    "test/reward_std",
+    "train/episode",
+    "train/length",
+    "train/reward",
+    "update/loss/actor",
+    "update/loss/critic1",
+    "update/loss/critic2"
+  ],
+  "source_file": "E:\\Ls\\LearningCorn\\Computer\\AboutScience\\About EAT\\EAT-master\\EATlogs\\EAT基线对比\\ATry\\d2sac\\2026-08-17_01-02-11\\events.out.tfevents.1786899731.pytorch-2591.7165.0",
+  "source_mb": 0.05,
+  "path": "data/trials/d2sac/2026-08-17_01-02-11"
+}

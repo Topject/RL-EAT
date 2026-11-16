@@ -1,0 +1,35 @@
+{
+  "campaign": "trials",
+  "variant": "",
+  "algorithm": "tryeat",
+  "run_id": "2026-08-15_17-49-12",
+  "env_steps": 336000,
+  "test_reward": {
+    "first": 143.96849060058594,
+    "last": 166.36997985839844,
+    "best": 169.9420623779297,
+    "best_step": 334656,
+    "n": 501
+  },
+  "train_reward_last": 162.6790313720703,
+  "ddim_eta_last": null,
+  "curated_tags": [
+    "save/env_step",
+    "save/epoch",
+    "save/gradient_step",
+    "test/env_step",
+    "test/length",
+    "test/length_std",
+    "test/reward",
+    "test/reward_std",
+    "train/episode",
+    "train/length",
+    "train/reward",
+    "update/loss/actor",
+    "update/loss/critic1",
+    "update/loss/critic2"
+  ],
+  "source_file": "E:\\Ls\\LearningCorn\\Computer\\AboutScience\\About EAT\\EAT-master\\EATlogs\\EAT基线对比\\ATry\\tryeat\\2026-08-15_17-49-12\\events.out.tfevents.1786787352.pytorch-2591.4970.0",
+  "source_mb": 0.22,
+  "path": "data/trials/tryeat/2026-08-15_17-49-12"
+}

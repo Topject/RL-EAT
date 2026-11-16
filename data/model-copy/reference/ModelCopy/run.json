@@ -1,0 +1,37 @@
+{
+  "campaign": "model-copy",
+  "variant": "",
+  "algorithm": "reference",
+  "run_id": "ModelCopy",
+  "env_steps": 150000,
+  "test_reward": {
+    "first": 0.0,
+    "last": 12.550638198852539,
+    "best": 229.0361328125,
+    "best_step": 1000,
+    "n": 151
+  },
+  "train_reward_last": 20.014680862426758,
+  "ddim_eta_last": null,
+  "curated_tags": [
+    "save/env_step",
+    "save/epoch",
+    "save/gradient_step",
+    "test/env_step",
+    "test/length",
+    "test/length_std",
+    "test/reward",
+    "test/reward_std",
+    "train/episode",
+    "train/length",
+    "train/reward",
+    "update/alpha",
+    "update/loss/actor",
+    "update/loss/alpha",
+    "update/loss/critic1",
+    "update/loss/critic2"
+  ],
+  "source_file": "E:\\Ls\\LearningCorn\\Computer\\AboutScience\\About EAT\\EAT-master\\EATlogs\\ModelCopy\\events.out.tfevents.1782195789.LAPTOP-VJ0FCR73.20460.0",
+  "source_mb": 0.12,
+  "path": "data\\model-copy\\reference\\ModelCopy"
+}

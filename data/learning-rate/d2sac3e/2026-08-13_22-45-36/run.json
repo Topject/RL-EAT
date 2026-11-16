@@ -1,0 +1,35 @@
+{
+  "campaign": "learning-rate",
+  "variant": "",
+  "algorithm": "d2sac3e",
+  "run_id": "2026-08-13_22-45-36",
+  "env_steps": 336000,
+  "test_reward": {
+    "first": 139.61831665039062,
+    "last": 158.89027404785156,
+    "best": 167.572509765625,
+    "best_step": 63168,
+    "n": 501
+  },
+  "train_reward_last": 159.6563720703125,
+  "ddim_eta_last": null,
+  "curated_tags": [
+    "save/env_step",
+    "save/epoch",
+    "save/gradient_step",
+    "test/env_step",
+    "test/length",
+    "test/length_std",
+    "test/reward",
+    "test/reward_std",
+    "train/episode",
+    "train/length",
+    "train/reward",
+    "update/loss/actor",
+    "update/loss/critic1",
+    "update/loss/critic2"
+  ],
+  "source_file": "E:\\Ls\\LearningCorn\\Computer\\AboutScience\\About EAT\\EAT-master\\EATlogs\\EAT基线对比\\DatA\\d2sac3e\\3e-4\\2026-08-13_22-45-36\\events.out.tfevents.1786632336.pytorch-2591.6098.0",
+  "source_mb": 0.26,
+  "path": "data/learning-rate/d2sac3e/2026-08-13_22-45-36"
+}

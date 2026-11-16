@@ -1,0 +1,36 @@
+{
+  "campaign": "fallback-rerun",
+  "variant": "",
+  "algorithm": "ppo",
+  "run_id": "2026-08-17_22-45-49",
+  "env_steps": 841400,
+  "test_reward": {
+    "first": 121.78546142578125,
+    "last": 190.7428436279297,
+    "best": 191.99517822265625,
+    "best_step": 679324,
+    "n": 501
+  },
+  "train_reward_last": 187.8991241455078,
+  "ddim_eta_last": null,
+  "curated_tags": [
+    "save/env_step",
+    "save/epoch",
+    "save/gradient_step",
+    "test/env_step",
+    "test/length",
+    "test/length_std",
+    "test/reward",
+    "test/reward_std",
+    "train/episode",
+    "train/length",
+    "train/reward",
+    "update/loss",
+    "update/loss/clip",
+    "update/loss/ent",
+    "update/loss/vf"
+  ],
+  "source_file": "E:\\Ls\\LearningCorn\\Computer\\AboutScience\\About EAT\\EAT-master\\EATlogs\\EAT基线对比\\fallback\\ppo\\2026-08-17_22-45-49\\events.out.tfevents.1786977949.pytorch-8891.5704.0",
+  "source_mb": 0.28,
+  "path": "data/fallback-rerun/ppo/2026-08-17_22-45-49"
+}

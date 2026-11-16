@@ -1,0 +1,36 @@
+{
+  "campaign": "fig6-main",
+  "variant": "",
+  "algorithm": "ppo",
+  "run_id": "2026-08-13_22-05-45",
+  "env_steps": 848668,
+  "test_reward": {
+    "first": 101.45164489746094,
+    "last": 186.7266845703125,
+    "best": 192.9714813232422,
+    "best_step": 629739,
+    "n": 501
+  },
+  "train_reward_last": 186.43710327148438,
+  "ddim_eta_last": null,
+  "curated_tags": [
+    "save/env_step",
+    "save/epoch",
+    "save/gradient_step",
+    "test/env_step",
+    "test/length",
+    "test/length_std",
+    "test/reward",
+    "test/reward_std",
+    "train/episode",
+    "train/length",
+    "train/reward",
+    "update/loss",
+    "update/loss/clip",
+    "update/loss/ent",
+    "update/loss/vf"
+  ],
+  "source_file": "E:\\Ls\\LearningCorn\\Computer\\AboutScience\\About EAT\\EAT-master\\EATlogs\\EAT基线对比\\A\\ppo\\2026-08-13_22-05-45\\events.out.tfevents.1786629945.pytorch-2591.4746.0",
+  "source_mb": 0.28,
+  "path": "data/fig6-main/ppo/2026-08-13_22-05-45"
+}

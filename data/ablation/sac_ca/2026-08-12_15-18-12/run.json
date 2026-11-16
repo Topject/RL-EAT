@@ -1,0 +1,37 @@
+{
+  "campaign": "ablation",
+  "variant": "",
+  "algorithm": "sac_ca",
+  "run_id": "2026-08-12_15-18-12",
+  "env_steps": 336000,
+  "test_reward": {
+    "first": 0.0,
+    "last": 185.49526977539062,
+    "best": 191.57154846191406,
+    "best_step": 155232,
+    "n": 501
+  },
+  "train_reward_last": 185.42434692382812,
+  "ddim_eta_last": null,
+  "curated_tags": [
+    "save/env_step",
+    "save/epoch",
+    "save/gradient_step",
+    "test/env_step",
+    "test/length",
+    "test/length_std",
+    "test/reward",
+    "test/reward_std",
+    "train/episode",
+    "train/length",
+    "train/reward",
+    "update/alpha",
+    "update/loss/actor",
+    "update/loss/alpha",
+    "update/loss/critic1",
+    "update/loss/critic2"
+  ],
+  "source_file": "E:\\Ls\\LearningCorn\\Computer\\AboutScience\\About EAT\\EAT-master\\EATlogs\\EAT基线对比\\B\\sac_ca\\2026-08-12_15-18-12\\events.out.tfevents.1786519092.pytorch-5591.9863.0",
+  "source_mb": 0.26,
+  "path": "data/ablation/sac_ca/2026-08-12_15-18-12"
+}

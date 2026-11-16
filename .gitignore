@@ -1,0 +1,31 @@
+# 原始训练日志（7.4 GB）不入库，用 tools/extract_runs.py 重新生成 data/
+EATlogs/
+tmp/
+runs/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+
+# 模型权重：单个 .pth 1–3 MB，但数量多且可复现，放在 Release 而不是仓库里
+*.pth
+*.pt
+*.ckpt
+*.safetensors
+
+# 训练产物
+runs/
+outputs/
+data/*.jsonl
+events.out.tfevents.*
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini

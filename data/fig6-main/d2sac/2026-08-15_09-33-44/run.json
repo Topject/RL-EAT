@@ -1,0 +1,35 @@
+{
+  "campaign": "fig6-main",
+  "variant": "",
+  "algorithm": "d2sac",
+  "run_id": "2026-08-15_09-33-44",
+  "env_steps": 336000,
+  "test_reward": {
+    "first": 136.31747436523438,
+    "last": 156.03651428222656,
+    "best": 167.44212341308594,
+    "best_step": 30912,
+    "n": 501
+  },
+  "train_reward_last": 160.21035766601562,
+  "ddim_eta_last": null,
+  "curated_tags": [
+    "save/env_step",
+    "save/epoch",
+    "save/gradient_step",
+    "test/env_step",
+    "test/length",
+    "test/length_std",
+    "test/reward",
+    "test/reward_std",
+    "train/episode",
+    "train/length",
+    "train/reward",
+    "update/loss/actor",
+    "update/loss/critic1",
+    "update/loss/critic2"
+  ],
+  "source_file": "E:\\Ls\\LearningCorn\\Computer\\AboutScience\\About EAT\\EAT-master\\EATlogs\\EAT基线对比\\A\\d2sac\\2026-08-15_09-33-44\\events.out.tfevents.1786757624.pytorch-2591.7789.0",
+  "source_mb": 0.26,
+  "path": "data/fig6-main/d2sac/2026-08-15_09-33-44"
+}

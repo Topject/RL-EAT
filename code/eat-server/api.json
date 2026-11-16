@@ -1,0 +1,67 @@
+{
+  "endpoints": [
+    {
+      "path": "/init",
+      "method": "POST",
+      "params": {
+        "body": {
+          "job_id": { "type": "string", "required": true },
+          "master_addr": { "type": "string", "required": true },
+          "master_port": { "type": "integer", "required": true },
+          "world_size": { "type": "integer", "required": true },
+          "rank": { "type": "integer", "required": true },
+          "local_rank": { "type": "integer", "required": true },
+          "height": { "type": "integer", "required": false, "default": 512 },
+          "width": { "type": "integer", "required": false, "default": 512 },
+          "warmup_steps": { "type": "integer", "required": false, "default": 4 },
+          "mode": { "type": "string", "required": false, "default": "corrected_async_gn" },
+          "parallelism": { "type": "string", "required": false, "default": "patch" },
+          "split_batch": { "type": "boolean", "required": false, "default": true },
+          "use_cuda_graph": { "type": "boolean", "required": false, "default": true },
+          "guidance_scale": { "type": "number", "required": false, "default": 5.0 }
+        }
+      },
+      "returns": {
+        "200": { "status": "ok", "job_id": "string", "rank": "integer", "world_size": "integer" },
+        "400": { "error": "string" },
+        "409": { "error": "string" },
+        "500": { "error": "string" }
+      }
+    },
+    {
+      "path": "/draw",
+      "method": "POST",
+      "params": {
+        "body": {
+          "job_id": { "type": "string", "required": true },
+          "prompt": { "type": "string", "required": true },
+          "num_inference_steps": { "type": "integer", "required": false, "default": 50 },
+          "guidance_scale": { "type": "number", "required": false, "default": 5.0 },
+          "seed": { "type": "integer", "required": false, "default": 1234 }
+        }
+      },
+      "returns": {
+        "200": {
+          "image/png": { "filename": "result.png" },
+          "application/json": { "status": "ok", "rank": "integer" }
+        },
+        "400": { "error": "string" },
+        "409": { "error": "string" },
+        "500": { "error": "string" }
+      }
+    },
+    {
+      "path": "/destroy",
+      "method": "POST",
+      "params": {
+        "body": null
+      },
+      "returns": {
+        "200": { "status": "string" },
+        "500": { "error": "string" }
+      }
+    }
+  ]
+}
+
+

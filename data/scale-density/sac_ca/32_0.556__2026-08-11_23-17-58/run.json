@@ -1,0 +1,40 @@
+{
+  "campaign": "scale-density",
+  "variant": "32_0.556",
+  "algorithm": "sac_ca",
+  "run_id": "2026-08-11_23-17-58",
+  "env_steps": 672,
+  "test_reward": {
+    "first": 131.0583953857422,
+    "last": 138.52854919433594,
+    "best": 138.52854919433594,
+    "best_step": 672,
+    "n": 2
+  },
+  "train_reward_last": null,
+  "ddim_eta_last": null,
+  "curated_tags": [
+    "save/env_step",
+    "save/epoch",
+    "save/gradient_step",
+    "test/env_step",
+    "test/length",
+    "test/length_std",
+    "test/reward",
+    "test/reward_std",
+    "train/action0_mean",
+    "train/action0_std",
+    "train/action1_mean",
+    "train/action1_std",
+    "train/action2_mean",
+    "train/action2_std",
+    "train/avg_quality",
+    "train/avg_response_time",
+    "train/completed_tasks_per_epoch",
+    "train/lr_actor",
+    "train/lr_critic"
+  ],
+  "source_file": "E:\\Ls\\LearningCorn\\Computer\\AboutScience\\About EAT\\EAT-master\\EATlogs\\EAT基线对比\\zzz\\runs1\\32_0.556\\sac_ca\\2026-08-11_23-17-58\\events.out.tfevents.1786461478.LAPTOP-VJ0FCR73.43016.0",
+  "source_mb": 0.0,
+  "path": "data/scale-density/sac_ca/32_0.556__2026-08-11_23-17-58"
+}
