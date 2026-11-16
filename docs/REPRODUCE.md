@@ -49,9 +49,9 @@ $env:PYTHONPATH = "$PWD\code\eat-train;$PWD\code\eat-train\scripts"
 
 **名字错位，务必按这张表看**（本快照最容易踩的坑）：
 
-1. `eval_dcasac.py` 的文件名像是 `trainer.dcasac` 的评估脚本，但它 `import` 的是 `trainer.dicasac`、`algo_prefix="sac_dica"` —— 它实际上是 **EAT 的评估脚本**（`eval_dcasac.py#L11`、`#L211`、`#L258`）。
+1. `eval_dcasac.py` 的文件名像是 `trainer.dcasac` 的评估脚本，但它 `import` 的是 `trainer.dicasac`、`algo_prefix="sac_dica"`。它实际上是 **EAT 的评估脚本**（`eval_dcasac.py#L11`、`#L211`、`#L258`）。
 2. `eval_dsac.py` 才是 `trainer.dsac`（D2SAC-SA）的评估脚本。
-3. `trainer.dcasac` —— 第 06 章由 checkpoint 反推出的主扫描 `d2sac` —— **在快照里既没有训练脚本也没有评估脚本**。第 06 章因此把它的复现命令标为 未记录，而不是贴一条假命令。
+3. `trainer.dcasac`，第 06 章由 checkpoint 反推出的主扫描 `d2sac`，**在快照里既没有训练脚本也没有评估脚本**。第 06 章因此把它的复现命令标为 未记录，而不是贴一条假命令。
 
 **脚本常量与主扫描不一致**：四个训练脚本都写死了 `set_global_config(node_num=64, max_visible_tasks=8)` 与 `lr = 3e-4`
 （`sac_train.py#L36`、`#L46`；`sac_d_train.py#L49`、`#L59`；`sac_dica_train.py#L35`、`#L44`）。
@@ -65,7 +65,7 @@ python scripts\sac_dica_train.py        # 未验证：脚本没有 argparse，�
 
 **注意 / caveat**：这些脚本是"改常量再运行"的风格，没有命令行参数（`sac_dica_train.py` 只有 `main()`）。作者当时用的是另一个驱动脚本 `scripts/fig6/train.py`（支持 `--algo eat --epoch 500 --device cuda --seed 43`），**它不在本快照里**，所以本仓库无法复现"一行命令跑一个算法"。
 
-These scripts are "edit the constants, then run" style and take no CLI arguments. The table above was verified by reading each script's import line, because the file names are cross-wired: `eval_dcasac.py` actually evaluates `trainer.dicasac` (EAT), and nothing in the snapshot trains or evaluates `trainer.dcasac` — the trainer that the chapter-06 checkpoint forensics points to for the main-sweep `d2sac`. Every train script also hardcodes 64 nodes and `lr = 3e-4`, which is not the main-sweep configuration.
+These scripts are "edit the constants, then run" style and take no CLI arguments. The table above was verified by reading each script's import line, because the file names are cross-wired: `eval_dcasac.py` actually evaluates `trainer.dicasac` (EAT), and nothing in the snapshot trains or evaluates `trainer.dcasac`, the trainer that the chapter-06 checkpoint forensics points to for the main-sweep `d2sac`. Every train script also hardcodes 64 nodes and `lr = 3e-4`, which is not the main-sweep configuration.
 
 ## 4. 输出去哪 / Where outputs land
 

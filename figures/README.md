@@ -2,8 +2,8 @@
 
 两套图，用途不同：
 
-- **`curves/`** — 本仓库用 `tools/plot_curves.py` 从 `data/` **重新绘制**的图。数字与 `docs/FACTS.md` 一一对应，可以复算。
-- **`original/`** — 作者当时自己画的图，**原样保留**。用来对照"当时看到的形状"和"现在重画的形状"。
+- **`curves/`**, 本仓库用 `tools/plot_curves.py` 从 `data/` **重新绘制**的图。数字与 `docs/FACTS.md` 一一对应，可以复算。
+- **`original/`**, 作者当时自己画的图，**原样保留**。用来对照"当时看到的形状"和"现在重画的形状"。
 
 Two sets. `curves/` is redrawn here from `data/` and every value is traceable to `docs/FACTS.md`. `original/` keeps the author's own renders untouched, for comparison.
 
@@ -15,7 +15,7 @@ python tools\plot_curves.py --data data --out figures\curves
 
 ---
 
-## curves/ — 本仓库重绘 / redrawn here
+## curves/, 本仓库重绘 / redrawn here
 
 | 文件 | 内容 | 用在 |
 |---|---|---|
@@ -40,7 +40,7 @@ Plotting conventions: cold-start point dropped, then `EMA(0.25)`; the shaded ban
 
 ---
 
-## original/ — 作者原图 / the author's own figures
+## original/, 作者原图 / the author's own figures
 
 | 目录 | 内容 | 说明 |
 |---|---|---|

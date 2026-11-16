@@ -4,7 +4,7 @@
 > 论文：**EAT: QoS-Aware Edge-Collaborative AIGC Task Scheduling via Attention-Guided Diffusion Reinforcement Learning**，投稿 IEEE TMC。
 > 仓库内容：把这篇论文的对比实验按算法拆成 15 个顺序项目。每章带训练曲线、结果、简要分析和可以下载的训练数据。
 
-> Paper: **EAT — QoS-Aware Edge-Collaborative AIGC Task Scheduling via Attention-Guided Diffusion Reinforcement Learning** (submitted to IEEE TMC).
+> Paper: **EAT, QoS-Aware Edge-Collaborative AIGC Task Scheduling via Attention-Guided Diffusion Reinforcement Learning** (submitted to IEEE TMC).
 > This repository splits the paper's comparison into 15 ordered mini-projects. Each chapter ships its curves, results, a short analysis and the data behind it.
 
 ![EAT 系统示意 / EAT system overview](00-problem/demo.png)

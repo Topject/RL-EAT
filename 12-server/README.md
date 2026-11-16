@@ -1,24 +1,24 @@
-# 12 EAT-Server — 把"一个任务"变成一次真实的扩散推理
-# 12 EAT-SERVER — turning a task into a real diffusion inference
+# 12 EAT-Server, 把"一个任务"变成一次真实的扩散推理
+# 12 EAT-SERVER, turning a task into a real diffusion inference
 
 > 上一章 / previous：[11 规模与任务密度](../11-scale-density/README.md) · 下一章 / next：[13 全部结果](../13-results/README.md)
 
 ## 0. 中英摘要 / Abstract
 
-前十一章的所有数字都来自同一处：一个仿真环境。在这个环境里，一个任务的执行时间是算出来的 —— `a × steps + b`，再除以并行权重和节点算力（`code/eat-train/env/node.py#L72-L93`、`env/env.py#L269`）。也就是说，"任务有多贵"是参数，不是测量。
+前十一章的所有数字都来自同一处：一个仿真环境。在这个环境里，一个任务的执行时间是算出来的，`a × steps + b`，再除以并行权重和节点算力（`code/eat-train/env/node.py#L72-L93`、`env/env.py#L269`）。也就是说，"任务有多贵"是参数，不是测量。
 
 `code/eat-server/` 是把这句话翻过来的那一半：它用 DistriFuser 把 Stable Diffusion 的 UNet 按 patch / tensor 切开分布在多张卡上，用 FastAPI 暴露 `/init`、`/draw`、`/destroy`、`/remain_time`，让调度器可以真的下发一次推理并等它返回。训练侧的 `env/backend/real.py` 就是这套 HTTP 接口的客户端。
 
 本章必须说清楚一件不体面的事：**本仓库没有任何物理执行日志或结果。** 原始工作区的 `EATlogs/` 里也没有。因此本章只写代码路径、接口形状和"要测什么"，所有物理数字（单任务延迟、吞吐、GPU 型号、图像质量）一律 未记录 / not recorded。
 
-English: every number in chapters 01–11 comes from one simulator, where a task's execution time is computed as `a × steps + b` divided by a parallelism weight and node compute power — a parameter, not a measurement. `code/eat-server/` is the other half of that sentence: it shards a Stable Diffusion UNet across GPUs through DistriFuser, exposes `/init`, `/draw`, `/destroy`, `/remain_time` through FastAPI, and lets the scheduler issue real inferences. `env/backend/real.py` is the client of exactly those endpoints. This repository contains no physical execution logs or results, so this chapter describes code paths and what would have to be measured; every physical number is marked not recorded.
+English: every number in chapters 01–11 comes from one simulator, where a task's execution time is computed as `a × steps + b` divided by a parallelism weight and node compute power, a parameter, not a measurement. `code/eat-server/` is the other half of that sentence: it shards a Stable Diffusion UNet across GPUs through DistriFuser, exposes `/init`, `/draw`, `/destroy`, `/remain_time` through FastAPI, and lets the scheduler issue real inferences. `env/backend/real.py` is the client of exactly those endpoints. This repository contains no physical execution logs or results, so this chapter describes code paths and what would have to be measured; every physical number is marked not recorded.
 
 ## 1. 为什么会有这一步 / Why this step
 
 - 仿真里的时间成本是参数化的：`Node.receive()` 用 `time_pred_a × steps + time_pred_b` 得到基础执行时间，再按并行度权重与节点算力折算（`code/eat-train/env/node.py#L76-L91`）。这个模型能表达"步数越多越慢、并行越多越快"，但它不知道真实 GPU 上发生了什么。
 - 更麻烦的是奖励：奖励里的质量项直接用 `steps` 当质量代理（`code/eat-train/env/env.py#L490-L503`）。也就是说，仿真里"质量"和"时间"都来自同一个数 `steps`。如果真实推理的时间/质量关系不是这样，那整个奖励信号都要重估。
 - 于是有了这一半代码：把"任务的执行"换成真的 SD 推理，让时间与质量都变成可测量的量。对应 `RuntimeConfig.mode` 的两个取值 `"simulated"` / `"real"`（`code/eat-train/scripts/config.py#L81`）。
-- 本章要回答的问题不是"物理侧跑得怎么样"（**未记录 / not recorded**），而是"物理侧的代码长什么样、接上它需要测哪些数"。这是一份接口说明书，不是一份实验报告。
+- 这一节回答的是另一类问题：物理侧的代码长什么样，接上它需要测哪些数。物理侧跑得怎么样，目前未记录 / not recorded。这是一份接口说明书，不是一份实验报告。
 
 ## 2. 代码里有什么 / What is in the box
 
@@ -62,7 +62,7 @@ English: every number in chapters 01–11 comes from one simulator, where a task
 - 端口池是 `29500–29599` 一百个端口（`real.py#L42`），每次 `job_id` 独占一个，失败会归还（`#L49-L80`）。这说明服务端是"一次任务一个进程组"的模型，进程组重建是常态成本。
 - `/draw` 是阻塞调用，超时由 `RuntimeConfig.api_timeout` 决定（`real.py#L23`、`#L238`）；根目录 `app.py` 里 `dist.barrier()` 之后才返回（`#L272-L279`）。
 - 服务端对 `guidance_scale` 与实际配置的一致性有硬检查：请求的 `guidance_scale` 与当前 `do_classifier_free_guidance` 不匹配就直接 400（`app.py#L242-L245`）。也就是**改 CFG 必须重新 `/init`**，不能在一次任务中途改。
-- `world_size` 必须是 2 的幂（`app.py#L136-L138`、`distrifuser/utils.py#L20-L21`），所以节点组合法长度受限 —— 这会影响调度器能选哪些并行度。
+- `world_size` 必须是 2 的幂（`app.py#L136-L138`、`distrifuser/utils.py#L20-L21`），所以节点组合法长度受限。这会影响调度器能选哪些并行度。
 
 ### 3.1 接口契约 / The endpoint contract
 
@@ -87,7 +87,7 @@ English: every number in chapters 01–11 comes from one simulator, where a task
 | 任务"质量" | 仍用 `steps` 当代理（`env.py#L490-L503`） | 两边都不是测量 |
 | 图像实际质量（PSNR/LPIPS/FID） | `scripts/compute_metrics.py` 可以算 | **未记录 / not recorded**：仓库里没有跑过的输出 |
 
-所以物理模式下的"时间"仍然是估计与实测的混合体：一条任务刚下发时用的是 `steps × 0.1`，之后靠轮询 `/remain_time` 修正。这一点对复现很重要 —— 如果只把 `mode` 从 `simulated` 改成 `real`，而不去核对这两条时间来源，得到的仍然是一个半仿真环境（推断 / inferred，依据是上面两处代码路径）。
+所以物理模式下的"时间"仍然是估计与实测的混合体：一条任务刚下发时用的是 `steps × 0.1`，之后靠轮询 `/remain_time` 修正。这一点对复现很重要，如果只把 `mode` 从 `simulated` 改成 `real`，而不去核对这两条时间来源，得到的仍然是一个半仿真环境（推断 / inferred，依据是上面两处代码路径）。
 
 ## 5. 想知道物理侧表现，必须测什么 / What would have to be measured
 
@@ -131,7 +131,7 @@ English: every number in chapters 01–11 comes from one simulator, where a task
 
 ## 7. 数据导航 / Data
 
-本章**没有**数据目录 —— 这是本章最重要的一个事实。
+本章**没有**数据目录。这是本章最重要的一个事实。
 
 | 内容 | 路径 | 状态 |
 |---|---|---|
@@ -156,7 +156,7 @@ python code\eat-server\app.py --port 8000 --device-id 0
 python code\eat-server\scripts\run_sdxl.py --mode benchmark
 ```
 
-第二条在没有初始化 torch.distributed 时会退化成单卡（`distrifuser/utils.py#L43-L51` 捕获异常后把 `world_size` 当成 1），所以它测的是单卡延迟，不是分布式延迟 —— 这一点在报告数字时必须写清楚。
+第二条在没有初始化 torch.distributed 时会退化成单卡（`distrifuser/utils.py#L43-L51` 捕获异常后把 `world_size` 当成 1），所以它测的是单卡延迟，不是分布式延迟。这一点在报告数字时必须写清楚。
 
 ---
 

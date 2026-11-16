@@ -1,5 +1,5 @@
-# 02 DDPG — 把"选哪个任务、用几步"交给一个确定性 actor-critic
-# 02 DDPG — handing "which task, how many steps" to a deterministic actor-critic
+# 02 DDPG, 把"选哪个任务、用几步"交给一个确定性 actor-critic
+# 02 DDPG, handing "which task, how many steps" to a deterministic actor-critic
 
 > 上一章 / previous：[01 非学习基线](../01-heuristics/README.md) · 下一章 / next：[03 TD3](../03-td3/README.md)
 
@@ -9,12 +9,12 @@
 本章是算法谱系的第一步：用一个确定性 actor 直接输出三维动作 `[exec_flag, step, task]`，让 reward 去决定这个权衡。
 三次独立训练终点 **180.4 ± 8.6**（186.18 / 184.51 / 170.44），最高 187.3，预算 336,000 环境步，参数 349,704 总 / 174,852 在线。
 它没有熵项，探索只有收集时那 0.1 的固定高斯噪声；一次运行掉到 170.44，就足以把样本标准差撑到 8.6。
-在三条 off-policy 基线里 DDPG 最弱（180.4 < 181.3 < 184.3）；而 `docs/FACTS.md` §7 的早期评估里，一个 DDPG 策略崩到平均响应 1.28 s / 质量 0.033 —— 这里的"快"是症状，不是胜利。
+在三条 off-policy 基线里 DDPG 最弱（180.4 < 181.3 < 184.3）；而 `docs/FACTS.md` §7 的早期评估里，一个 DDPG 策略崩到平均响应 1.28 s / 质量 0.033。这里的"快"是症状，不是胜利。
 
 Chapter 01 pinned the two extremes of the stage: random actions are fastest (25.02 s) but score 0.403 quality, greedy is slowest (39.61 s) but tops quality at 0.752, and no rule steers "which task" and "how many inference steps" at the same time.
 This chapter is the first learning step: a deterministic actor emits the 3D action `[exec_flag, step, task]` and the reward decides the trade-off.
 Three independent runs end at **180.4 ± 8.6** (186.18 / 184.51 / 170.44), best 187.3, over 336,000 env steps, with 349,704 total / 174,852 live parameters.
-There is no entropy term — exploration is only the fixed 0.1 Gaussian noise added while collecting — and one run landing on 170.44 is enough to inflate the sample std to 8.6.
+There is no entropy term, exploration is only the fixed 0.1 Gaussian noise added while collecting, and one run landing on 170.44 is enough to inflate the sample std to 8.6.
 DDPG is the weakest of the three off-policy arms (180.4 < 181.3 < 184.3), and in the early evaluation panel (`docs/FACTS.md` §7) a DDPG policy collapses to 1.28 s / quality 0.033: here "fast" is a symptom, not a win.
 
 ## 1. 为什么会有这一步 / Why this step
@@ -58,7 +58,7 @@ DDPG is the weakest of the three off-policy arms (180.4 < 181.3 < 184.3), and in
 
 表里的取值凡出现在代码里的都标了行号；`docs/FACTS.md` 只覆盖节点数、λ、质量比、种子、步数、宽度与参数量这几项。
 
-**配置与实跑不一致的地方**：脚本里写的是 `epoch = 1500`、`step_per_epoch = 1000`（`ddpg_train.py#L47-L48`），但记录到的环境步数是 336,000（`docs/FACTS.md` §1）。`curves.csv` 里 `save/env_step` 每次正好递增 672，而 336,000 = 500 × 672（算术），500 又正好是作者笔记里的 epoch 预算（`docs/FACTS.md` §8，500 epochs）。推断 / inferred：实跑大约是 500 个 epoch、每 epoch 672 环境步，而不是脚本里那 1500 × 1000 —— 这只是数字上的拟合，日志里没有 epoch 号可以直接证。原始驱动脚本 `scripts/fig6/train.py` 不在快照里，实跑配置只能这样反推。
+**配置与实跑不一致的地方**：脚本里写的是 `epoch = 1500`、`step_per_epoch = 1000`（`ddpg_train.py#L47-L48`），但记录到的环境步数是 336,000（`docs/FACTS.md` §1）。`curves.csv` 里 `save/env_step` 每次正好递增 672，而 336,000 = 500 × 672（算术），500 又正好是作者笔记里的 epoch 预算（`docs/FACTS.md` §8，500 epochs）。推断 / inferred：实跑大约是 500 个 epoch、每 epoch 672 环境步，而不是脚本里那 1500 × 1000。这只是数字上的拟合，日志里没有 epoch 号可以直接证。原始驱动脚本 `scripts/fig6/train.py` 不在快照里，实跑配置只能这样反推。
 
 ## 4. 收敛过程 / Convergence
 
@@ -72,11 +72,11 @@ DDPG is the weakest of the three off-policy arms (180.4 < 181.3 < 184.3), and in
 | **均值 ± 样本标准差** | | **180.4 ± 8.6** | `docs/FACTS.md` §1 |
 | 最高回报 | | 187.3 | 见下方说明 |
 
-"最高回报 187.3"来自 `docs/FACTS.md` §1；它不等于任何一次运行的终点（186.18 是终点里最高的），与 [`data/by_algorithm.csv`](../data/by_algorithm.csv) 的 `best_mean` 列一致 —— 推断 / inferred：它是三次运行各自 best 的平均，而不是单次运行的最好成绩。
+"最高回报 187.3"来自 `docs/FACTS.md` §1；它不等于任何一次运行的终点（186.18 是终点里最高的），与 [`data/by_algorithm.csv`](../data/by_algorithm.csv) 的 `best_mean` 列一致，推断 / inferred：它是三次运行各自 best 的平均，而不是单次运行的最好成绩。
 
 - **早期摆动大**：曲线最前面一小段横轴里，灰带（三次运行的 min/max）几乎从图的纵轴下界一直张到 180 刻度下方，说明最早那些步里"哪个种子先起来"几乎是随机的（读图 + 推断）。
 - **中期收敛**：曲线中位数在横轴过半之前就贴到 180 刻度附近，之后到 336,000 步基本是一条窄带（读图 + 推断）。
-- **末段分化**：分歧不在早期而在末端 —— 两次落在 186.18 / 184.51 附近，一次落到 170.44。也就是说方差不是"训练不稳"，而是"最后一次评估的位置不同"。
+- **末段分化**：分歧不在早期而在末端，两次落在 186.18 / 184.51 附近，一次落到 170.44。也就是说，方差差别更可能来自最后一次评估落在哪个位置，训练不稳这个解释站不住。
 - **best ≈ last**：187.3 只比最好的终点 186.18 高一点，说明这条曲线在后半程基本没有继续变好，DDPG 在 336,000 步预算内已经到顶（推断）。
 
 ## 5. 结果与对比 / Results
@@ -99,10 +99,10 @@ DDPG is the weakest of the three off-policy arms (180.4 < 181.3 < 184.3), and in
 ## 6. 简要分析 / Analysis
 
 1. **无熵项是结构性事实，不是调参问题**。`DDPGPolicy` 这里只接受 `exploration_noise=0.1`（`trainer/ddpg/trainer.py#L87`），没有 α、没有 `log_std`、没有 target entropy；对比 SAC 的 `target_entropy`（`trainer/sac/trainer.py#L82`）和 PPO 的 `ent_coef`（`trainer/ppo/trainer.py#L76`），DDPG 是三条基线里唯一连"探索强度"这个概念都没有的（推断 / inferred：这是它方差最大、也最容易卡在某个动作模式上的结构性原因）。
-2. **8.6 的样本标准差可以被一次运行解释**。186.18 与 184.51 只差 1.7，而 170.44 是另外两次的 15.7 / 14.1 之下（算术）。把这三次放在一起，8.6 这个样本标准差几乎全部来自那一次偏离 —— 三个种子的统计在这里信息量很低，均值被一次运行主导。
-3. **FACTS §7 里的 DDPG 是崩塌，不是快**。1.28 s / 质量 0.033（同一格里还有 20.26 s / 0.400）。按第 01 章的解读方式，0.033 反解就是 1 步，即永远用最低推理步数；响应 1.28 s 是因为任务占机时间被压到最短。策略学到的是"把任务赶紧做完"，把 reward 里那 0.600 的质量权重整个丢掉了。这类策略在回报曲线上不会立刻显形，只在（响应时间, 质量）这块面板上显形 —— 所以"快"必须和"质量"一起读。
+2. **8.6 的样本标准差可以被一次运行解释**。186.18 与 184.51 只差 1.7，而 170.44 是另外两次的 15.7 / 14.1 之下（算术）。把这三次放在一起，8.6 这个样本标准差几乎全部来自那一次偏离，三个种子的统计在这里信息量很低，均值被一次运行主导。
+3. **FACTS §7 里的 DDPG 是崩塌，不是快**。1.28 s / 质量 0.033（同一格里还有 20.26 s / 0.400）。按第 01 章的解读方式，0.033 反解就是 1 步，即永远用最低推理步数；响应 1.28 s 是因为任务占机时间被压到最短。策略学到的是"把任务赶紧做完"，把 reward 里那 0.600 的质量权重整个丢掉了。这类策略在回报曲线上不会立刻显形，只在（响应时间, 质量）这块面板上显形，所以"快"必须和"质量"一起读。
 4. **参数量对得上结构**。349,704 总 / 174,852 在线，总参数正好是在线参数的两倍（算术）：一对目标网络（actor_target + critic_target），没有第二个 critic。这个数在第 03 章会变成 524,810 / 262,405，正好多出一个 critic 的量级。
-5. **复现到了什么、没复现到什么**。复现到的是"地位"：DDPG 是三条同预算 off-policy 里终点均值最低的一条（180.4 < 181.3 < 184.3），方向上和论文把 DDPG 排在最后的说法一致。**没复现到**的是一个稳定的估计：三次运行的样本标准差 8.6 大于它与 SAC 的均值差 3.9（算术），也就是说在 3 个种子下"DDPG 不如 SAC"和"两者持平"都还没被排除。要判断差距，需要更多种子，或改用 §7 那种（响应时间, 质量）双指标面板 —— 而后者没有可重算的日志（`docs/FACTS.md` §7）。
+5. **复现到了什么、没复现到什么**。复现到的是"地位"：DDPG 是三条同预算 off-policy 里终点均值最低的一条（180.4 < 181.3 < 184.3），方向上和论文把 DDPG 排在最后的说法一致。**没复现到**的是一个稳定的估计：三次运行的样本标准差 8.6 大于它与 SAC 的均值差 3.9（算术），也就是说在 3 个种子下"DDPG 不如 SAC"和"两者持平"都还没被排除。要判断差距，需要更多种子，或改用 §7 那种（响应时间, 质量）双指标面板，而后者没有可重算的日志（`docs/FACTS.md` §7）。
 
 ## 7. 训练数据导航 / Training data
 
@@ -116,7 +116,7 @@ DDPG is the weakest of the three off-policy arms (180.4 < 181.3 < 184.3), and in
 | 参数量的取证来源 | `policy_best.pth` + `tools/ckpt_inventory.py`，见 `docs/FACTS.md` 开头的说明 |
 | 原始 TensorBoard 日志 | `EATlogs/EAT基线对比/**/events.out.tfevents.*`（未入库，见 `docs/DATA.md`） |
 
-`curves.csv` 里可用的 tag 有 `test/reward`、`test/length`、`test/length_std`、`train/reward`、`update/loss/actor`、`update/loss/critic`、`save/env_step` 等（以 `run.json` 的 `curated_tags` 为准）；`ddim_eta_last` 对 DDPG 是 `null` —— 本章没有 η 轨迹可看。
+`curves.csv` 里可用的 tag 有 `test/reward`、`test/length`、`test/length_std`、`train/reward`、`update/loss/actor`、`update/loss/critic`、`save/env_step` 等（以 `run.json` 的 `curated_tags` 为准）；`ddim_eta_last` 对 DDPG 是 `null`，本章没有 η 轨迹可看。
 
 ## 8. 复现命令 / Reproduce
 
@@ -128,7 +128,7 @@ $env:PYTHONPATH = ".;scripts"
 python scripts\ddpg_train.py
 ```
 
-- 日志目录是 `runs/<num_nodes>_<quality_ratio>/ddpg/<timestamp>`（`ddpg_train.py#L68-L72`），与仓库里 `data/fig6-main/ddpg/<timestamp>` 的目录名不同 —— 推断 / inferred：两边的对应关系靠时间戳建立。
+- 日志目录是 `runs/<num_nodes>_<quality_ratio>/ddpg/<timestamp>`（`ddpg_train.py#L68-L72`），与仓库里 `data/fig6-main/ddpg/<timestamp>` 的目录名不同，推断 / inferred：两边的对应关系靠时间戳建立。
 - 产生本节那三次运行的**精确原始命令未保留 / not preserved**：作者当时用的驱动脚本 `scripts/fig6/train.py` 不在这个快照里，脚本里的 `epoch=1500 / step_per_epoch=1000` 也与实跑的 336,000 步对不上（见 §3）。
 
 ---

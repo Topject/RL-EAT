@@ -1,15 +1,15 @@
-# 10 调参 — 学习率与 fallback 重跑能否救回扩散臂
-# 10 TUNING — can a learning rate or a fallback rerun rescue the diffusion arms
+# 10 调参, 学习率与 fallback 重跑能否救回扩散臂
+# 10 TUNING, can a learning rate or a fallback rerun rescue the diffusion arms
 
 > 上一章 / previous：[09 消融](../09-ablation/README.md) · 下一章 / next：[11 规模与任务密度](../11-scale-density/README.md)
 
 ## 0. 中英摘要 / Abstract
 
-第 09 章把 EAT 拆开看：机制方向成立（去掉交叉注意力的 EAT-CA 只有 162.8 ± 3.6，带交叉注意力的 EAT 是 177.7 ± 16.5），但 EAT 自己的均值被一次 158.68 拖住了 —— 另外两次是 187.17 / 187.38。本章记录作者为此做的两类尝试，两次都是"换条件重跑"而不是"改算法"。
+第 09 章把 EAT 拆开看：机制方向成立（去掉交叉注意力的 EAT-CA 只有 162.8 ± 3.6，带交叉注意力的 EAT 是 177.7 ± 16.5），但 EAT 自己的均值被一次 158.68 拖住了，另外两次是 187.17 / 187.38。本章记录作者为此做的两类尝试，两次都是"换条件重跑"而不是"改算法"。
 
-第一类是换学习率：主扫描用 1e-4，三条支路改成 3e-4 重跑。结果是没有救回来 —— D2SAC@3e-4 158.8 ± 3.2，与 1e-4 的 159.5 ± 4.0 几乎同高；EAT@3e-4 159.9 ± 2.5，四次运行最高的一次是 163.13，离主扫描那两次 187 很远。
+第一类是换学习率：主扫描用 1e-4，三条支路改成 3e-4 重跑。结果是没有救回来，D2SAC@3e-4 158.8 ± 3.2，与 1e-4 的 159.5 ± 4.0 几乎同高；EAT@3e-4 159.9 ± 2.5，四次运行最高的一次是 163.13，离主扫描那两次 187 很远。
 
-第二类是 fallback 重跑：改了评测里任务索引的 fallback 之后重跑七个算法，EAT 变成 182.9 ± 2.1，方差从 16.5 掉到 2.1。但这一版的 EAT 有 841,144 个参数，主扫描是 709,560；D2SAC 也从 422,135 变成 713,431 —— 两次扫描不是同一版网络，所以"稳定性提升"这句话不成立，能说的只有"这一版网络更稳定"。
+第二类是 fallback 重跑：改了评测里任务索引的 fallback 之后重跑七个算法，EAT 变成 182.9 ± 2.1，方差从 16.5 掉到 2.1。但这一版的 EAT 有 841,144 个参数，主扫描是 709,560；D2SAC 也从 422,135 变成 713,431，两次扫描不是同一版网络，所以"稳定性提升"这句话不成立，能说的只有"这一版网络更稳定"。
 
 English: Chapter 09 showed that the mechanism direction holds while EAT's own mean is dragged down by one collapsed seed. This chapter records two follow-up attempts. Raising the learning rate to 3e-4 does not rescue the diffusion arms: D2SAC@3e-4 lands at 158.8 ± 3.2 against 159.5 ± 4.0 at 1e-4, and EAT@3e-4 at 159.9 ± 2.5 never gets near the main sweep's two 187-point seeds. The fallback rerun does lift EAT to 182.9 ± 2.1, but EAT carries 841,144 parameters there versus 709,560 in the main sweep, so the two sweeps are not the same network and the variance drop cannot be attributed to the fallback fix.
 
@@ -115,10 +115,10 @@ English: Chapter 09 showed that the mechanism direction holds while EAT's own me
 
 ## 6. 简要分析 / Analysis
 
-1. **能说的和不能说的。** 能说：换 3e-4 之后扩散臂仍然停在 159 附近；fallback 那一版 EAT 是 182.9 ± 2.1。不能说：fallback 修好了 EAT —— 因为网络换了（841,144 对 709,560），这是"另一台机器跑得更稳"，不是"同一台机器被修好"。
+1. **能说的和不能说的。** 能说：换 3e-4 之后扩散臂仍然停在 159 附近；fallback 那一版 EAT 是 182.9 ± 2.1。不能说：fallback 修好了 EAT，因为网络换了（841,144 对 709,560），这是"另一台机器跑得更稳"，不是"同一台机器被修好"。
 2. **方差的两条不同来源。** 3e-4 把方差从 16.5 压到 2.5，靠的是把整条曲线按到低位；fallback 把方差压到 2.1，靠的是（可能）更稳的网络与环境。两种"稳"含义完全不同，混在一起看会得出相反结论。
 3. **3e-4 支路缺参数量。** `docs/FACTS.md` §3 只记了回报，没有参数列，因此本章无法排除"3e-4 支路也换了网络"这一可能。这是本节结论里最软的一处，也是下一次复现最该先补的一项（一行 `tools/ckpt_inventory.py` 就能补）。
-4. **η 的线索。** 主扫描 EAT 学到的 η 终点是 0.0940 / 0.0899 / 0.0941（`docs/FACTS.md` §1，`train/ddim_eta`）。η 从初始 0.5（`rl_diffusion_ddim.py#L74-L75`）压到 0.09 意味着采样几乎退化成了确定性动作，探索基本停止 —— 这与"一次崩溃 + 两次极好"的形态一致（推断 / inferred）。fallback 组的 η 终点没有被写进 `docs/FACTS.md`，此处 未记录 / not recorded；原始字段在 `data/fallback-rerun/eat/<run>/run.json` 的 `ddim_eta_last`。
+4. **η 的线索。** 主扫描 EAT 学到的 η 终点是 0.0940 / 0.0899 / 0.0941（`docs/FACTS.md` §1，`train/ddim_eta`）。η 从初始 0.5（`rl_diffusion_ddim.py#L74-L75`）压到 0.09 意味着采样几乎退化成了确定性动作，探索基本停止，这与"一次崩溃 + 两次极好"的形态一致（推断 / inferred）。fallback 组的 η 终点没有被写进 `docs/FACTS.md`，此处 未记录 / not recorded；原始字段在 `data/fallback-rerun/eat/<run>/run.json` 的 `ddim_eta_last`。
 
 ### 6.1 作者笔记里的五次尝试（不在本仓库里）
 
@@ -132,11 +132,11 @@ English: Chapter 09 showed that the mechanism direction holds while EAT's own me
 | 让两个 critic 对称 | 否 | 未记录 / not recorded |
 | 给 D2SAC 的 σ 加截断 | 否 | 未记录 / not recorded |
 
-这张表的作用不是凑数，而是划边界：本章的结论只覆盖"3e-4"和"fallback 重跑"两件事，其余五次尝试在仓库里**没有**可核对的运行记录。
+这一段的作用是划边界：本章的结论只覆盖"3e-4"和"fallback 重跑"两件事，其余五次尝试在仓库里**没有**可核对的运行记录。
 
 ### 6.2 复现到了什么、没复现到什么
 
-复现到：3e-4 不改变扩散臂的量级（D2SAC 158.8 / EAT 159.9 仍在 160 附近）、fallback 组 EAT 确实稳定（182.9 ± 2.1）。没复现到：任何一次"通过调超参或重跑环境，让 EAT 稳定在 180 以上**且网络不变**"的证据 —— 目前最好的 fallback 结果（182.9）恰好是换了网络之后拿到的。
+复现到：3e-4 不改变扩散臂的量级（D2SAC 158.8 / EAT 159.9 仍在 160 附近）、fallback 组 EAT 确实稳定（182.9 ± 2.1）。没复现到：任何一次"通过调超参或重跑环境，让 EAT 稳定在 180 以上**且网络不变**"的证据，目前最好的 fallback 结果（182.9）恰好是换了网络之后拿到的。
 
 ## 7. 训练数据导航 / Training data
 

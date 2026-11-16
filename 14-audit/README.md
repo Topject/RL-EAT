@@ -1,5 +1,5 @@
-# 14 复现审计 — 原始实现里会改变结论的七处问题
-# 14 AUDIT — seven implementation issues that change conclusions
+# 14 复现审计, 原始实现里会改变结论的七处问题
+# 14 AUDIT, seven implementation issues that change conclusions
 
 > 上一章 / previous：[13 全部结果](../13-results/README.md) · 返回目录 / index：[README](../README.md)
 
@@ -44,15 +44,15 @@ The previous 13 chapters ask how EAT performs; this chapter asks whether the imp
 | `raw .../main/EAT-Train.zip` | 404 |
 
 **能下的结论**：公开仓库目前只能读到 `README.md`，训练/服务代码不在公开可访问路径上。
-**不能下的结论**：不能说"作者没上传代码"——本地 `code/` 里的 97 个源文件来源无法从公开仓库核对（可能是早期的公开版本、私有交付或压缩包）。本仓库因此把"原始实现"一律定义为 **`code/` 快照**，而不是"作者现在仓库里的代码"。
+**不能下的结论**：不能说"作者没上传代码"，本地 `code/` 里的 97 个源文件来源无法从公开仓库核对（可能是早期的公开版本、私有交付或压缩包）。本仓库因此把"原始实现"一律定义为 **`code/` 快照**，而不是"作者现在仓库里的代码"。
 
-A further reason to be careful: the snapshot is **not** the revision that trained the checkpoints. `trainer/dcasac/trainer.py#L116` passes `schedule_timesteps=` while `model/diffusion/rl_diffusion.py#L34` only accepts `n_timesteps`, so that trainer raises `TypeError` as printed. Any claim about the runs must therefore be checked against the checkpoints and curves, not against the source alone — which is what A1–A3 do.
+A further reason to be careful: the snapshot is **not** the revision that trained the checkpoints. `trainer/dcasac/trainer.py#L116` passes `schedule_timesteps=` while `model/diffusion/rl_diffusion.py#L34` only accepts `n_timesteps`, so that trainer raises `TypeError` as printed. Any claim about the runs must therefore be checked against the checkpoints and curves, not against the source alone, which is what A1–A3 do.
 
 ---
 
 ## 3. 七处问题 / The seven issues
 
-### A1 没有全局种子 —— E3
+### A1 没有全局种子，E3
 
 **证据**
 - 全树（`code/eat-train/` 97 个 `.py`）检索 `manual_seed` / `np.random.seed` / `random.seed` / `set_seed`：**0 处调用**。
@@ -63,12 +63,12 @@ A further reason to be careful: the snapshot is **not** the revision that traine
 
 **修复**：`torch.manual_seed` / `np.random.seed` / `random.seed` 三件套 + 环境 `reset(seed=...)` + 把 seed 写进运行目录名与 `run.json`。
 
-### A2 critic1 / critic2 结构不对称 —— E3
+### A2 critic1 / critic2 结构不对称，E3
 
 **证据**
 - 代码：`trainer/dicasac/trainer.py#L132-L134` 取 `first_dim = _crit[0]`、`tail = tuple(_crit[1:])`，然后
-  `L148 critic1 = Critic(preprocess_net=..., hidden_sizes=critic_hidden_sizes)`，
-  `L169 critic2 = Critic(preprocess_net=..., hidden_sizes=tail)`。
+  `L148 critic1 = Critic(preprocess_net=... hidden_sizes=critic_hidden_sizes)`，
+  `L169 critic2 = Critic(preprocess_net=... hidden_sizes=tail)`。
 - 权重（`tools/ckpt_inventory.py` 直接读 `policy_best.pth`，共 20 个 EAT checkpoint）：
 
 | EAT 版本 | checkpoint 数 | critic1 | critic2 | 差值 |
@@ -76,17 +76,17 @@ A further reason to be careful: the snapshot is **not** the revision that traine
 | 主扫描 `fig6-main`（709,560，08-19） | 3 | 155,809 | 155,809 | **0**（对称） |
 | `trials` / `learning-rate` / `fallback-rerun`（841,144，08-12 ~ 08-17） | **17** | **221,601** | **155,809** | **65,792** |
 
-65,792 = 256×256 + 256，**正好是 critic1 多出来的一整层**。也就是说这不是"理论上可能不对称"，而是 17 个 checkpoint 里确实少一层；而 08-19 的 3 次正式运行是**对称**的。
+65,792 = 256×256 + 256，**正好是 critic1 多出来的一整层**。17 个 checkpoint 里确实少一层，这已经超出理论上的可能。08-19 的 3 次正式运行反而**对称**。
 
-**这个分布本身是个线索**：`AAAresult.docx` 里作者自己写过"两个 critic 要统一用 `tail`"，而最终主扫描的权重确实是对称的 —— 推断：主扫描之前已经修过这个问题，A2 影响的是 `trials` / 3e-4 支路 / fallback 重跑这三批，**不影响第 13 章那张主表**。这条修正很重要：它把 A2 从"推翻主结果"降级为"让旁支对比失去可比性"。
+**这个分布本身是个线索**：`AAAresult.docx` 里作者自己写过"两个 critic 要统一用 `tail`"，而最终主扫描的权重确实是对称的，推断：主扫描之前已经修过这个问题，A2 影响的是 `trials` / 3e-4 支路 / fallback 重跑这三批，**不影响第 13 章那张主表**。这条修正很重要：它把 A2 从"推翻主结果"降级为"让旁支对比失去可比性"。
 
 **影响**：SAC 族的目标是 `min(Q1,Q2) − α·logπ`，两个 Q 应当同分布、同容量；容量不同会让 `min` 系统性偏向弱的那一个，同时"双 Q 抑制高估"的前提（两个独立同分布估计）被破坏。所以凡是用 841,144 版 EAT 与其它臂比较的地方（第 [10](../10-tuning/README.md) 章的 fallback 与 3e-4 两节），结论都要打折扣。
 
 **修复**：两者都用 `critic_hidden_sizes`（或都用 `tail`），然后跑对照。
 
-> EN — 3 main-sweep checkpoints are symmetric; all **17** checkpoints of the 841,144-parameter variant (trials, 3e-4, fallback) are asymmetric by exactly one 256×256+256 layer. The author's own note asked for symmetric critics and the final sweep complies, so A2 weakens the side comparisons (fallback, 3e-4), not the headline table.
+> EN: 3 main-sweep checkpoints are symmetric; all **17** checkpoints of the 841,144-parameter variant (trials, 3e-4, fallback) are asymmetric by exactly one 256×256+256 layer. The author's own note asked for symmetric critics and the final sweep complies, so A2 weakens the side comparisons (fallback, 3e-4), not the headline table.
 
-### A3 D2SAC 的熵项被硬置零 —— E2
+### A3 D2SAC 的熵项被硬置零，E2
 
 **证据**：`policy/sac_diffusion.py#L159-L161`
 
@@ -99,13 +99,13 @@ actor_loss = (-q_min - self._alpha * entropy).mean()
 自动温度分支（`#L167-L173`）的 surrogate 是 `(-entropy).detach() + target_entropy`，`entropy` 恒为 0 时它是常数，梯度只与 `log_alpha` 线性相关，方向只会把 α 推向 0。
 对照：同文件里 EAT 用的 `SACDDIMPolicy`（`#L393-L394`）**保留**了这一项。
 
-**这意味着什么**：这个 D2SAC 实际上不是"扩散版 SAC"，而是"无熵正则的扩散 actor + 双 Q"。它全场最低（159.5 ± 4.0）与这一点一致，但**不能**据此说论文的 D2SAC 差。
+**这意味着什么**：这个 D2SAC 更像一个无熵正则的扩散 actor 加双 Q。叫它扩散版 SAC 会误导。它全场最低（159.5 ± 4.0）与这一点一致，但**不能**据此说论文的 D2SAC 差。
 
 **重要限定（E1）**：据复现者说明，D2SAC 臂是在原作者"环境不兼容、未上传"后由 AI 重建的。因此 A3 只对 **本仓库 `code/` 里的这一份实现**成立，不能外推到论文的 D2SAC。
 
 **修复**：恢复熵项 + 打开自动温度，跑对照。
 
-### A4 七个 trainer 的 actor 不做 tanh 压缩 —— E2
+### A4 七个 trainer 的 actor 不做 tanh 压缩，E2
 
 **证据**：以下 trainer 的 `ActorProb(...)` 都传了 `unbounded=True`：
 
@@ -125,7 +125,7 @@ tianshou 的 `ActorProb(unbounded=True)` 表示输出**不做 tanh**、`log_prob
 
 **修复**：`unbounded=False`（标准 tanh-squashed Gaussian + 修正项）或显式 squash。
 
-### A5 隐藏层激活用 ReLU，而非论文的 Mish —— E2（论文侧为间接证据）
+### A5 隐藏层激活用 ReLU，而非论文的 Mish，E2（论文侧为间接证据）
 
 **证据**
 - 代码：上述七个 trainer 的 `ActorProb(...)` / `Critic(...)` **都没有传 `activation=`**，走 tianshou 默认的 ReLU；而同一仓库自己的注意力模块用 Mish（`model/attention/cross_attention.py#L46`、`#L171`，`self_attention.py#L41`），EAT 的 `DiffusionMLP` 也用 Mish（`trainer/dicasac/trainer.py#L44`）。
@@ -135,7 +135,7 @@ tianshou 的 `ActorProb(unbounded=True)` 表示输出**不做 tanh**、`log_prob
 
 **修复**：所有 Actor/Critic 显式 `activation=nn.Mish`。
 
-### A6 快照不可直接运行 + 评估脚本名与 trainer 错位 —— E3
+### A6 快照不可直接运行 + 评估脚本名与 trainer 错位，E3
 
 **证据**
 - `trainer/dcasac/trainer.py#L116` 传 `schedule_timesteps=`，`model/diffusion/rl_diffusion.py#L34` 只接受 `n_timesteps` → 按现有代码实例化即 `TypeError`。
@@ -146,7 +146,7 @@ tianshou 的 `ActorProb(unbounded=True)` 表示输出**不做 tanh**、`log_prob
 
 **修复**：修关键字、统一命名，或在 README 里给出"脚本 ↔ trainer ↔ 算法"对照表（本仓库已补）。
 
-### A7 配置漂移：脚本常量与论文、与主扫描都不一致 —— E2
+### A7 配置漂移：脚本常量与论文、与主扫描都不一致，E2
 
 | 项 | 脚本常量 | 作者笔记/论文 | 后果 |
 |---|---|---|---|
@@ -155,7 +155,7 @@ tianshou 的 `ActorProb(unbounded=True)` 表示输出**不做 tanh**、`log_prob
 | 网络 | — | — | `fig6-main` 的 EAT 709,560 与 `learning-rate`/`fallback` 的 841,144 是**两套网络** |
 | 扩散步数 | code 默认 5 / 10 | 论文提到 4 / 10 | 未记录实际值 |
 
-**影响**：任何"只改了一个超参"的结论都要先确认网络没变——本仓库 [10-tuning](../10-tuning/README.md) 就是因为这个差点把处（EAT 的 3e-4 支路确实换了网络）。
+**影响**：任何"只改了一个超参"的结论都要先确认网络没变，本仓库 [10-tuning](../10-tuning/README.md) 就是因为这个差点把处（EAT 的 3e-4 支路确实换了网络）。
 
 ---
 
@@ -188,7 +188,7 @@ tianshou 的 `ActorProb(unbounded=True)` 表示输出**不做 tanh**、`log_prob
 
 以下是复现者向导师汇报的要点，按证据等级重排（原文见其汇报与 `EAT复现logs.docx`）：
 
-1. **baseline 之外还有实现问题**：EAT 仓库的 PPO 也不是标准 PPO —— `ActorProb(unbounded=True)` 没有 tanh（A4）、隐藏层 ReLU 而非 Mish（A5）、全仓库没有全局种子（A1）。→ 本章第 3 节逐条给了代码位置与物证。
+1. **baseline 之外还有实现问题**：EAT 仓库的 PPO 也不是标准 PPO，`ActorProb(unbounded=True)` 没有 tanh（A4）、隐藏层 ReLU 而非 Mish（A5）、全仓库没有全局种子（A1）。→ 本章第 3 节逐条给了代码位置与物证。
 2. **因此不适合拿它做 MAPPO 的底座**：在这个 PPO 上叠多智能体会把 A4/A5/A1 一起放大。→ 结论成立，且理由充分。
 3. **做法：算法底座换 CleanRL 标准 PPO/MAPPO，只保留 EAT 的环境模型与复现分析**。→ 这是本章支持的技术判断：环境（`env/`）与调度语义是本仓库里最扎实的部分（第 [00](../00-problem/README.md) 章），而 baseline 实现是最不可信的部分（本章）。
 4. **衍生路线（待导师判断）**：换全局种子再跑 EAT，以"EAT 实现修复 + 可复现性分析"作为副投稿。→ 见第 7 节的独立评估。
@@ -209,7 +209,7 @@ tianshou 的 `ActorProb(unbounded=True)` 表示输出**不做 tanh**、`log_prob
   3. D2SAC 恢复熵项前后各 5 种子 → 第二个例子，且能量化"D2SAC 垫底有多少是实现的锅"（10 次训练）。
 - **不建议**做主投稿：算法本身没有新增贡献，篇幅与创新性都撑不起一篇正式论文；作为副线/技术报告或会议短文更合适。
 
-Routes and reasons in English: the audit is worth writing up, but only after (1) a determinism check, (2) a symmetric-critic A/B, and (3) an entropy-restored D2SAC A/B — about 22 short runs. Without them the work reads as a bug list; with them it reads as evidence that implementation details flip conclusions. It should stay a secondary route, not the main paper.
+Routes and reasons in English: the audit is worth writing up, but only after (1) a determinism check, (2) a symmetric-critic A/B, and (3) an entropy-restored D2SAC A/B, about 22 short runs. Without them the work reads as a bug list; with them it reads as evidence that implementation details flip conclusions. It should stay a secondary route, not the main paper.
 
 ---
 

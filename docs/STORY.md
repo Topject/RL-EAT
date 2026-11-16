@@ -1,7 +1,7 @@
 # 这段复现到底发生了什么 / What actually happened during the reproduction
 
 这是一份按时间顺序的记录，材料来自 88 次运行的目录时间戳（`data/runs_index.csv`）和作者当时的笔记（`EATlogs/Reading/AAAresult.docx`、`coding.docx`、`AlgoAndData.xlsx`，未随仓库分发）。
-它不是"论文怎么写、我就怎么跑"的叙述，而是"先跑歪了、发现哪歪了、再修"的叙述。
+它记的是先跑歪、发现哪里歪、再修的过程，没有照着论文的顺序重走一遍。
 
 A chronological record built from the timestamps of all 88 runs plus the author's own notes. It is not the story of the paper; it is the story of the reproduction, including the parts that went sideways.
 
@@ -10,11 +10,11 @@ A chronological record built from the timestamps of all 88 runs plus the author'
 ## 第一幕｜先把尺子搞对（08-04 ~ 08-10）
 
 **08-04 12:28** 第一个能跑通的算法是 SAC，只有 336,000 步，终点回报 **177.47**。
-同一天 18:52 跑 EAT，32,000 步就到 **181.24** —— 看起来"扩散策略收敛更快"，但这是假象：两次运行的 `quality_ratio` 不同，奖励函数根本不是同一把尺子。
+同一天 18:52 跑 EAT，32,000 步就到 **181.24**，看起来"扩散策略收敛更快"，但这是假象：两次运行的 `quality_ratio` 不同，奖励函数根本不是同一把尺子。
 
 **08-05 05:37** 第三次 SAC 只有 **101.79**。同一个算法、同一份配置，三次运行差 75 分。这是第一次真正被提醒：**单次运行说明不了任何事**。
 
-**08-10** 一整天在做节点数与任务密度的扫描：32 节点 × quality_ratio 0.333 / 0.444。SAC 的终点回报分别是 **23.99 / 23.92 / 24.89**（0.333）和 **21.84 / −8.53 / 28.47**（0.444）——量级只有 20 出头。这不是"学得差"，而是 `quality_ratio` 从 0.600 降到 0.444/0.333 时，奖励里的质量项权重被砍掉，同样的决策只能拿到 20 分。
+**08-10** 一整天在做节点数与任务密度的扫描：32 节点 × quality_ratio 0.333 / 0.444。SAC 的终点回报分别是 **23.99 / 23.92 / 24.89**（0.333）和 **21.84 / −8.53 / 28.47**（0.444），量级只有 20 出头。这跟学得好坏关系不大。`quality_ratio` 从 0.600 降到 0.444 或 0.333 时，奖励里的质量项权重被砍掉，同样的决策只能拿到 20 分。
 
 **这一幕的结论**：`quality_ratio = w_q/(w_q+w_t1+w_t2)` 是奖励函数的一部分，跨它的回报不能比。后来第 11 章就是专门写这件事的。
 
@@ -33,10 +33,10 @@ A chronological record built from the timestamps of all 88 runs plus the author'
 | 08-15 06:50、09:33、17:49 | D2SAC | 336k 步，三次都在 156–164 |
 | 08-15 18:19、23:35、23:36 | TD3 | 336k 步 |
 
-**第一个意外**：D2SAC 三次全部停在 **156.04 / 158.62 / 163.82**。扩散动作头本来是用来解决多峰分布的，结果它成了全场最低——比不带熵的 DDPG 还低 20 分。
+**第一个意外**：D2SAC 三次全部停在 **156.04 / 158.62 / 163.82**。扩散动作头本来是用来解决多峰分布的，结果它成了全场最低，比不带熵的 DDPG 还低 20 分。
 **第二个意外**：PPO 和 DPPO 看起来最好（185.2 / 185.6），但它们跑的步数是其他算法的 2.4–2.5 倍。这两件事必须在同一段话里说，否则就变成"on-policy 赢了"。
 
-First surprise: all three D2SAC runs stall at 156–164, the lowest arm in the sweep — the diffusion head, added to model multi-modal actions, ends up worse than entropy-free DDPG.
+First surprise: all three D2SAC runs stall at 156–164, the lowest arm in the sweep, the diffusion head, added to model multi-modal actions, ends up worse than entropy-free DDPG.
 Second surprise: PPO and DPPO look best, but they consumed 2.4–2.5× the environment steps of every other arm.
 
 **中间的插曲**（08-11 20:01 ~ 08-14 23:33）：
@@ -60,7 +60,7 @@ Second surprise: PPO and DPPO look best, but they consumed 2.4–2.5× the envir
 | DPPO | 185.6 ± 1.0 | 187.6 ± 2.8 |
 | EAT | 177.7 ± 16.5 | **182.9 ± 2.1** |
 
-**最值得注意的是 D2SAC：从 159.5 跳到 180.7。** 这说明有一大块差距不是算法本身，而是"选中的任务常常根本不可执行"——fallback 让那些动作变成了有意义的决策。
+**最值得注意的是 D2SAC：从 159.5 跳到 180.7。** 这说明差距的大头落在选中的任务常常不可执行上，fallback 让那些动作变成了有意义的决策。
 
 **但必须同时说清楚**：fallback 这一批里 EAT 的参数量是 **841,144**（fig6-main 是 709,560），D2SAC 是 **713,431**（fig6-main 是 422,135）。也就是说，**两次扫描用的不是同一批网络**，两列数字不能当"A/B 测试"来读。这是整个复现里最容易被误读的一处。
 
@@ -110,6 +110,6 @@ These are exactly the "next steps" listed in chapter 10, and the experiments thi
 
 ## 一句话版本 / The one-paragraph version
 
-先把尺子校准（quality_ratio 决定奖励量级），再一个一个加机制（DDPG → TD3 → SAC → PPO → D2SAC → DPPO → EAT），途中发现环境里的 task-index fallback 会吞掉大量决策，修完之后扩散臂集体上移，最后 EAT 需要 416k 步才显形——它的两个种子是全表最高，第三个种子崩了，于是论文的名次没有复现出来，但每一个机制的作用方向都能在数据里找到对应。
+先把尺子校准（quality_ratio 决定奖励量级），再一个一个加机制（DDPG → TD3 → SAC → PPO → D2SAC → DPPO → EAT），途中发现环境里的 task-index fallback 会吞掉大量决策，修完之后扩散臂集体上移，最后 EAT 需要 416k 步才显形。它的两个种子是全表最高，第三个种子崩了，于是论文的名次没有复现出来，但每一个机制的作用方向都能在数据里找到对应。
 
-Calibrate the ruler first, then add one mechanism at a time. Along the way, an environment-level task-index fallback turns out to swallow a large share of decisions; fixing it lifts every diffusion arm. EAT needs 416k steps to show its shape: two of its seeds top the whole table, the third collapses, so the paper's ranking does not reproduce — but the direction of every mechanism can be found in the data.
+Calibrate the ruler first, then add one mechanism at a time. Along the way, an environment-level task-index fallback turns out to swallow a large share of decisions; fixing it lifts every diffusion arm. EAT needs 416k steps to show its shape: two of its seeds top the whole table, the third collapses, so the paper's ranking does not reproduce, but the direction of every mechanism can be found in the data.

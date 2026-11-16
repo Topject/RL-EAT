@@ -4,8 +4,8 @@
 Every algorithm chapter follows this skeleton, bilingual with Chinese first, 120–220 lines.
 
 ```markdown
-# NN 算法名 — 一句话它解决什么
-# NN ALGO — one line: what it solves
+# NN 算法名, 一句话它解决什么
+# NN ALGO, one line: what it solves
 
 > 上一章 / previous：[链接](../0X-xxx/README.md) · 下一章 / next：[链接](../0Y-yyy/README.md)
 

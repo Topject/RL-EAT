@@ -1,5 +1,5 @@
-# 13 全部结果 — 复现到的是机制，没复现到的是名次
-# 13 RESULTS — the mechanisms reproduce, the ranking does not
+# 13 全部结果, 复现到的是机制，没复现到的是名次
+# 13 RESULTS, the mechanisms reproduce, the ranking does not
 
 > 上一章 / previous：[12 EAT-Server 与物理侧](../12-server/README.md) · 下一章 / next：[返回目录 / index](../README.md)
 
@@ -7,15 +7,15 @@
 
 这一章把前十章的读数并到一张表上，然后回答一个问题：论文声称的排名 `EAT > DPPO ≈ D2SAC > PPO ≈ SAC > TD3 > DDPG`，在这批运行里成立吗？
 
-答案是不成立。复现排序是 `PPO 185.2 ≈ DPPO 185.6 > SAC 184.3 > TD3 181.3 > DDPG 180.4 > EAT 177.7 > D2SAC 159.5`。EAT 掉到第六不是因为它学不到高分 —— 三次里两次是 187.17 / 187.38，两次均值 187.28，比全场最好的三种子均值 DPPO 185.6 还高 —— 而是因为第三个种子塌到 158.68，17.7 的均值与 16.5 的标准差一起把它拖了下去。
+答案是不成立。复现排序是 `PPO 185.2 ≈ DPPO 185.6 > SAC 184.3 > TD3 181.3 > DDPG 180.4 > EAT 177.7 > D2SAC 159.5`。EAT 掉到第六，原因出在第三个种子。三次里两次是 187.17 / 187.38，均值 187.28，比全场最好的三种子均值 DPPO 185.6 还高。第三个种子塌到 158.68，177.7 的均值配 16.5 的标准差，一起把它拖了下去。
 
-还有两个必须同时说的限定：一是步数不齐（PPO / DPPO 跑到 80 万步以上，EAT 416,000，其余 336,000），二是最强证据来自方向而不是名次 —— 消融里 EAT-CA 少了交叉注意力、参数反而涨到 775,608、回报掉到 162.8，这个方向与论文一致。
+还有两个必须同时说的限定：一是步数不齐（PPO / DPPO 跑到 80 万步以上，EAT 416,000，其余 336,000），二是最强证据来自方向而不是名次，消融里 EAT-CA 少了交叉注意力、参数反而涨到 775,608、回报掉到 162.8，这个方向与论文一致。
 
-English: this chapter merges the readings of chapters 01–12 into one table and asks whether the paper's claimed ranking reproduces. It does not: the reproduced order is PPO ≈ DPPO > SAC > TD3 > DDPG > EAT > D2SAC. EAT falls to sixth not because it cannot reach high returns — two of three seeds are 187.17 / 187.38, averaging 187.28, above the best three-seed mean in the sweep (DPPO 185.6) — but because the third seed collapses to 158.68, and a 177.7 mean with a 16.5 standard deviation cannot survive that. Two caveats travel with the table: step budgets are not matched (PPO / DPPO above 800k, EAT 416,000, the rest 336,000), and the strongest evidence is directional, from the ablation, not a ranking. What reproduces is the mechanism; what does not is the order.
+English: this chapter merges the readings of chapters 01–12 into one table and asks whether the paper's claimed ranking reproduces. It does not: the reproduced order is PPO ≈ DPPO > SAC > TD3 > DDPG > EAT > D2SAC. EAT falls to sixth not because it cannot reach high returns, two of three seeds are 187.17 / 187.38, averaging 187.28, above the best three-seed mean in the sweep (DPPO 185.6), but because the third seed collapses to 158.68, and a 177.7 mean with a 16.5 standard deviation cannot survive that. Two caveats travel with the table: step budgets are not matched (PPO / DPPO above 800k, EAT 416,000, the rest 336,000), and the strongest evidence is directional, from the ablation, not a ranking. What reproduces is the mechanism; what does not is the order.
 
 ## 1. 主对比 / The main comparison
 
-![Figure 6 复现：验证回报曲线 / Figure 6 reproduction — validation return while training](../figures/curves/fig6_convergence.png)
+![Figure 6 复现：验证回报曲线 / Figure 6 reproduction, validation return while training](../figures/curves/fig6_convergence.png)
 
 ![七个算法的终点回报 / final validation return per algorithm](../figures/curves/fig6_final_bar.png)
 
@@ -47,7 +47,7 @@ English: this chapter merges the readings of chapters 01–12 into one table and
 
 两处偏差最值得看：
 
-1. **EAT 从第 1 掉到第 6。** 差距不在单次上限：全场单次终点最高的是 TD3 的 188.59，EAT 自己两次 187.17 / 187.38 都高于任何算法的三种子均值（最高是 DPPO 185.6，两次均值 187.28 高于它）。差距在稳定性 —— 一次 158.68 把均值拉到 177.7。
+1. **EAT 从第 1 掉到第 6。** 差距不在单次上限：全场单次终点最高的是 TD3 的 188.59，EAT 自己两次 187.17 / 187.38 都高于任何算法的三种子均值（最高是 DPPO 185.6，两次均值 187.28 高于它）。差距在稳定性，一次 158.68 把均值拉到 177.7。
 2. **D2SAC 从第 2/3 掉到最后。** 论文把 D2SAC 与 DPPO 并列第二，这里它是唯一低于 160 的臂（159.5 ± 4.0），比 DDPG 还低 20 分以上。也就是说，这批运行不支持"扩散动作头单独就能带来收益"这一读法；扩散要起作用，得有 PPO 的训练方式（DPPO 185.6）或 EAT 的注意力 + DDIM（两次 187+）。
 
 用一句话概括偏差的性质：**方向上 EAT 仍然是"扩散家族里能拿最高单点"的那一个，但名次上它拿不到第一，因为第一名要求三次都不塌。**
@@ -61,7 +61,7 @@ English: this chapter merges the readings of chapters 01–12 into one table and
 | EAT | 416,000 | 1.24 倍 |
 | DDPG / TD3 / SAC / D2SAC | 336,000 | 1 倍 |
 
-这是 on-policy 与 off-policy 的差别导致的：脚本里 PPO 的 `step_per_epoch` 是 10000、其它算法是 1000（`code/eat-train/scripts/ppo_train.py#L52`、`sac_train.py#L48`）。同一个 epoch 预算落到两种训练器上就是不同步数。这里还有一处对不上的地方要说清楚：作者笔记记录图 6 的预算按 epoch 计是 500（`docs/FACTS.md` §8），而脚本默认 `epoch = 1500`（`sac_train.py#L47`）—— 实际调用时用的是哪个值 未记录 / not recorded，能确认的只有"停在 336,000 / 416,000 / 80 万步"这个结果。
+这是 on-policy 与 off-policy 的差别导致的：脚本里 PPO 的 `step_per_epoch` 是 10000、其它算法是 1000（`code/eat-train/scripts/ppo_train.py#L52`、`sac_train.py#L48`）。同一个 epoch 预算落到两种训练器上就是不同步数。这里还有一处对不上的地方要说清楚：作者笔记记录图 6 的预算按 epoch 计是 500（`docs/FACTS.md` §8），而脚本默认 `epoch = 1500`（`sac_train.py#L47`），实际调用时用的是哪个值 未记录 / not recorded，能确认的只有"停在 336,000 / 416,000 / 80 万步"这个结果。
 
 后果很直接：PPO 的 185.2 与 DPPO 的 185.6 是在两倍多预算下取得的，**不能**直接读成"on-policy 比 off-policy 更好"。EAT 的 416,000 也不等于 336,000，它在预算上比 DDPG / SAC 宽松、比 PPO / DPPO 紧。
 
@@ -79,7 +79,7 @@ English: this chapter merges the readings of chapters 01–12 into one table and
 | 单点最高值 | 193.54 / 189.41 / 172.83（`data/runs_index.csv` 的 `test_reward_best`；三者均值 185.3，正是 `docs/FACTS.md` §1 的「最高回报」列） |
 | 学到的 η 终点 | 0.0940 / 0.0899 / 0.0941（`train/ddim_eta`） |
 
-关于单点最高值要补一句：`docs/FACTS.md` §1 那一列的统计口径是"每次运行最高点的种子均值"（EAT 的 185.3 就是 193.54 / 189.41 / 172.83 的均值），所以它不等于"全场单点最高"。按单点算，最高的是 DPPO 193.84，EAT 的 193.54 排第二 —— 仍然不是 EAT。这个区别在引用时必须说清楚，否则很容易变成"EAT 单点最高"这种错误说法。
+关于单点最高值要补一句：`docs/FACTS.md` §1 那一列的统计口径是"每次运行最高点的种子均值"（EAT 的 185.3 就是 193.54 / 189.41 / 172.83 的均值），所以它不等于"全场单点最高"。按单点算，最高的是 DPPO 193.84，EAT 的 193.54 排第二，仍然不是 EAT。这个区别在引用时必须说清楚，否则很容易变成"EAT 单点最高"这种错误说法。
 
 η 是三次数值上最一致的东西（0.0899–0.0941），而回报差了 28 分以上。η 从初始 0.5（`code/eat-train/model/diffusion/rl_diffusion_ddim.py#L74-L75`）压到 0.09 意味着 DDIM 采样几乎退化成确定性动作、探索基本停止；三个种子都走到同一个 η 却只有两个拿到 187，说明**问题不在 η 的收敛值本身**，而在收敛之前走了哪条路（推断 / inferred，依据是 η 终点差异极小、回报差异极大）。
 
@@ -109,7 +109,7 @@ English: this chapter merges the readings of chapters 01–12 into one table and
 
 下一轮训练要做三件事，每件都对应上面一条"软"：
 
-1. **对齐步数预算。** 把 PPO / DPPO 的 `step_per_epoch` 调到与 off-policy 同量级（或反过来把 off-policy 拉到 80 万步），再比一次 —— 现在这张表里第一梯队的两名都有两倍以上的预算优势。
+1. **对齐步数预算。** 把 PPO / DPPO 的 `step_per_epoch` 调到与 off-policy 同量级（或反过来把 off-policy 拉到 80 万步），再比一次，现在这张表里第一梯队的两名都有两倍以上的预算优势。
 2. **每个消融臂至少 3 个种子。** SAC-CA 与 D2SAC-SA 各 1 次，这两行的结论现在只能当假设看；EAT-CA 的 4 次也要确认种子编号是否与主扫描一致（主扫描是 42 / 120 / 245）。
 3. **固定种子的评估面板。** 现在 `test/*` 的种子沿用训练种子，评估点与训练点耦合。应该在训练之外固定一组评估种子，让"同一次运行"在多个世界里被重测，才能把"策略好"与"这一局运气好"分开。
 

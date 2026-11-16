@@ -74,7 +74,7 @@ points = [(float(r[1]), float(r[2])) for r in rows]      # (env_step, return)
 2. 第一个点常常是 `0.0`：那是"还没更新就评估"的冷启动点，画图时应当丢掉（`tools/plot_curves.py` 的 `drop_cold_start` 就是这么做的），但它**保留在 CSV 里**，不做任何篡改。
 3. `test/reward` 是三次/多次评估的平均，单点噪声很大。仓库里的图统一用 `EMA(0.25)` 平滑后再比较，原始点仍可复算。
 
-1. `step` is the tag's own x axis. For `test/*` it is environment steps, so algorithms can be compared horizontally — but each arm ends at its own budget (336k / 416k / 810k+).
+1. `step` is the tag's own x axis. For `test/*` it is environment steps, so algorithms can be compared horizontally, but each arm ends at its own budget (336k / 416k / 810k+).
 2. The first point is often `0.0`: that is the cold-start evaluation before any update. Plots drop it (`drop_cold_start`), the CSV keeps it. Nothing is overwritten.
 3. `test/reward` is already an average over evaluation episodes and is noisy point to point. The figures apply `EMA(0.25)` before comparing; raw points remain recomputable.
 

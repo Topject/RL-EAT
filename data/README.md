@@ -1,4 +1,4 @@
-# `data/` — 训练数据总目录 / training data
+# `data/`, 训练数据总目录 / training data
 
 这是本仓库**唯一**的训练数据目录。每章结尾的"训练数据导航"都指回这里。
 This is the repository's single training-data root. Every chapter's "training data" section links back here.
@@ -31,7 +31,7 @@ This is the repository's single training-data root. Every chapter's "training da
 
 ```
 data/fig6-main/eat/2026-08-19_20-25-52/
-├── curves.csv     tag,step,value —— 最多 600 点/标签
+├── curves.csv     tag,step,value，最多 600 点/标签
 └── run.json       实验、算法、env_steps、终点/最高回报、η 终点、保留的 tag 列表
 ```
 
@@ -44,7 +44,7 @@ data/fig6-main/eat/2026-08-19_20-25-52/
 
 ---
 
-## 3. 每个实验说明了什么 / What each campaign is for
+## 3. 每个实验的用途 / What each campaign is for
 
 | 目录 | 目的 | 运行数 | 章节 |
 |---|---|---|---|
@@ -71,5 +71,5 @@ data/fig6-main/eat/2026-08-19_20-25-52/
 1. Only 3 runs per algorithm (two ablation arms have 1). A 1–2 point gap is noise.
 2. Budgets differ: 336k (off-policy), 416k (EAT), ~810k (DPPO), ~849k (PPO).
 3. Same name, different network: `fig6-main/eat` (709,560 params) vs `fallback-rerun/eat` (841,144).
-4. Returns are not comparable across `quality_ratio` values — the reward function changes.
+4. Returns are not comparable across `quality_ratio` values, the reward function changes.
 5. The first `test/reward` point is often 0.0 (pre-update evaluation). Drop it when plotting; do not edit the file.

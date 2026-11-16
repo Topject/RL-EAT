@@ -1,5 +1,5 @@
-# 11 规模与任务密度 — 24 分和 180 分不是同一把尺子
-# 11 SCALE AND DENSITY — 24 and 180 are not the same yardstick
+# 11 规模与任务密度, 24 分和 180 分不是同一把尺子
+# 11 SCALE AND DENSITY, 24 and 180 are not the same yardstick
 
 > 上一章 / previous：[10 调参](../10-tuning/README.md) · 下一章 / next：[12 EAT-Server](../12-server/README.md)
 
@@ -7,17 +7,17 @@
 
 到目前为止所有章节都用同一套环境：32 节点、可见任务 8、奖励权重 q=6 / t1=3，也就是 quality_ratio 0.600。本章换的是这个比例本身：在 32 节点上把 quality_ratio 拉到 0.333 / 0.444 / 0.556 / 0.600 四档，看回报会怎么变。
 
-核心结论只有一句：**quality_ratio 直接改写奖励函数，所以不同比率之间的回报不可比。** 32_0.333 的 SAC 是 23.99 / 23.92 / 24.89，32_0.600 的 SAC 是 177.47 / 166.88 / 101.79 —— 从 24 到 177 不是"学得更好"，是同一件事在四把不同的尺子上量出来的四个读数。本章唯一允许的横比是同一档比率内部。
+核心结论只有一句：**quality_ratio 直接改写奖励函数，所以不同比率之间的回报不可比。** 32_0.333 的 SAC 是 23.99 / 23.92 / 24.89，32_0.600 的 SAC 是 177.47 / 166.88 / 101.79，从 24 到 177 不是"学得更好"，是同一件事在四把不同的尺子上量出来的四个读数。本章唯一允许的横比是同一档比率内部。
 
 第二个结论是关于本章证据强度的：这些运行大多只有单种子，步数也远短于主扫描（32_0.600 的 EAT 只跑到 32k 步就停），所以这一章是**规模探针 / scale probe**，不是结果表。它的价值在于把"环境怎么配"这件事写清楚，而不是再给一个排名。
 
-English: every earlier chapter used one environment — 32 nodes, eight visible tasks, reward weights q=6 / t1=3, i.e. quality_ratio 0.600. This chapter moves that ratio itself across four settings. Because quality_ratio rewrites the reward function, returns from different ratios are not comparable: SAC reads 23.99 / 23.92 / 24.89 at 0.333 and 177.47 / 166.88 / 101.79 at 0.600, and the jump from 24 to 177 is a change of yardstick, not of learning. Only comparisons inside one ratio are valid. These runs are also mostly single-seed and short, so the chapter is a scale probe, not a result table.
+English: every earlier chapter used one environment, 32 nodes, eight visible tasks, reward weights q=6 / t1=3, i.e. quality_ratio 0.600. This chapter moves that ratio itself across four settings. Because quality_ratio rewrites the reward function, returns from different ratios are not comparable: SAC reads 23.99 / 23.92 / 24.89 at 0.333 and 177.47 / 166.88 / 101.79 at 0.600, and the jump from 24 to 177 is a change of yardstick, not of learning. Only comparisons inside one ratio are valid. These runs are also mostly single-seed and short, so the chapter is a scale probe, not a result table.
 
 ## 1. 为什么会有这一步 / Why this step
 
 - 前面九章都固定在一档环境里。论文的场景却是"边缘集群按规模变化"，节点数与任务密度是环境定义的一部分，不是超参。要判断一个调度器是否可用，必须知道换了规模之后读数怎么动。
 - 对应代码只有两个地方：节点数在 `code/eat-train/scripts/config.py` 的 `GlobalConfig.node_num`（默认 32，`#L24`），可见任务数在同文件 `max_visible_tasks`（默认 8，`#L25`）；任务密度的"档"在实验里是用奖励权重配出来的。
-- 本章要验证的假设：在 32 节点不变的前提下，改 quality_ratio 会让回报整体平移 —— 而且平移的幅度应该主要由奖励函数解释，而不是由策略质量解释。如果连"平移方向"都能被奖励函数算出来，那"跨比率比较回报"就是错的。
+- 本章要验证的假设：在 32 节点不变的前提下，改 quality_ratio 会让回报整体平移，而且平移的幅度应该主要由奖励函数解释，而不是由策略质量解释。如果连"平移方向"都能被奖励函数算出来，那"跨比率比较回报"就是错的。
 
 ## 2. 机制 / Mechanism
 
@@ -90,7 +90,7 @@ quality_ratio 不是独立参数，它是奖励权重的比值：
 
 数字全部来自 `docs/FACTS.md` §6。
 
-- 同一张图里，SAC 的均值线停在 60 附近，EAT 的均值线在 130 到 165 之间，两条阴影带的宽度都很大。这不是"谁比谁强"，而是四档比率被画进了同一坐标系。
+- 同一张图里，SAC 的均值线停在 60 附近，EAT 的均值线在 130 到 165 之间，两条阴影带的宽度都很大。这张图能说明的东西有限，四档比率被画进了同一个坐标系。
 - `scale_density.png` 是 `tools/plot_curves.py#L464-L471` 画的：它按算法分组，把 `scale-density-z` 目录下**所有** ratio 的 run 汇成一条均值线和一条 min/max 阴影带。所以那条阴影带本身就是"跨尺子混画"的产物（推断 / inferred，依据是同一段代码只按 `sac` / `eat` 取数，没有任何按 ratio 拆分的分支）。
 - 32_0.556 的 EAT 是唯一有 7 次的格子，里面 186.32 是最高的终点回报。它出现在一档比率与主扫描不同的环境里，因此**不能**和主扫描 EAT 的 187.17 / 187.38 相加或平均。
 - 32_0.444 的 SAC 出现 −8.53。`env.py#L516-L519` 对单步奖励有 `assert reward > 0`，所以负值不可能来自单步奖励本身，更可能来自评估聚合（推断 / inferred）。
@@ -119,14 +119,14 @@ quality_ratio 不是独立参数，它是奖励权重的比值：
 | 32_0.444 | 低质量权重下 PPO 能否维持（40.63） | 与 177 量级的任何比较 |
 | 32_0.333 | 极低质量权重下的奖励量级（23–25） | 任何"算法强弱"的结论 |
 
-唯一真正干净的对照是 SAC 那一对：同档、同步数、都是 336,000 步，本章 101.79 那次说明 0.600 档下单种子波动可以很大，而主扫描三次是 183.04 / 182.66 / 187.25（`docs/FACTS.md` §1）—— 同样的比率，主扫描没有一个种子掉到 100 附近。这说明本章那三次运行的种子/预算条件更差，而不是"0.600 档本身不稳"（推断 / inferred）。
+唯一真正干净的对照是 SAC 那一对：同档、同步数、都是 336,000 步，本章 101.79 那次说明 0.600 档下单种子波动可以很大，而主扫描三次是 183.04 / 182.66 / 187.25（`docs/FACTS.md` §1），同样的比率，主扫描没有一个种子掉到 100 附近。这说明本章那三次运行的种子/预算条件更差，而不是"0.600 档本身不稳"（推断 / inferred）。
 
 ## 6. 简要分析 / Analysis
 
 1. **尺子变了，不是学生变强了。** 24 与 177 的差别来自奖励权重：0.333 档下质量项的兑换率极低，回报整体被压到二三十的量级；0.600 档下同一个环境能给出 170+ 的读数。任何"某算法在本章拿到 24 分"的读法都是错的，正确读法是"这一档的分数上限本来就在 30 附近"（后半句是推断 / inferred，依据是 32_0.333 的三次全部落在 23.92–24.89 这个极窄区间）。
-2. **本章最该记住的是"不能做什么"**：不能跨档求平均、不能跨档排名、不能把 32_0.556 的 186.32 拿去和主扫描 187 并列 —— 这三件事在 README 与 13 章里都被明确排除。
+2. **本章最该记住的是"不能做什么"**：不能跨档求平均、不能跨档排名、不能把 32_0.556 的 186.32 拿去和主扫描 187 并列。这三件事在 README 与 13 章里都被明确排除。
 3. **证据强度有限。** 多数格子是单种子，`docs/FACTS.md` §6 甚至没有给出 0.556 的均值和标准差；32_0.600 的 EAT 只跑到 32k 步。所以这一章不能用来支持"规模越大/密度越高越好"这一类的结论，只能说"在 32 节点上，比率一改，读数怎么动"。
-4. **时间成本模型是参数化的，不是实测的。** 仿真里执行时间是 `a × steps + b`（`env.py#L269`），并行加速权重是一张注释标为"实测值"的固定表（`env/config.py#L72-L81`）。所以本章讨论的"密度"是奖励与队列意义上的密度，不是真实 GPU 上的吞吐 —— 真实侧见第 12 章。
+4. **时间成本模型是参数化的，不是实测的。** 仿真里执行时间是 `a × steps + b`（`env.py#L269`），并行加速权重是一张注释标为"实测值"的固定表（`env/config.py#L72-L81`）。所以本章讨论的"密度"是奖励与队列意义上的密度，不是真实 GPU 上的吞吐，真实侧见第 12 章。
 5. **复现到了什么、没复现到什么。** 复现到：四档比率下回报的量级差异，以及"同一算法在不同比率下读数完全不同"这一现象。没复现到：任何一档比率下的稳定排名（每格种子太少），也没有复现论文里跨规模的排名结论。
 
 ## 7. 训练数据导航 / Training data

@@ -60,4 +60,4 @@ The same algorithm carries four names here: the run-directory name (inside the l
 
 1. **`d2sac` 不等于 `dsac`**：运行目录的 `d2sac` 反推到 `trainer/dcasac`（交叉注意力 critic），而 `trainer/dsac` 对应的是消融里的 `d2sac_sa`。两者参数量差了一倍（422,135 vs 709,559）。
 2. **同名不同模型**：`fig6-main` 与 `fallback-rerun` 里的 `eat` 是两个网络（709,560 vs 841,144），`d2sac` 也是（422,135 vs 713,431）。跨扫描比数字之前先看参数量。
-3. **`quality_ratio` 不是超参数而是奖励权重的比值**：0.600 与 0.769 对应两套不同的奖励函数，跨这两个值的回报不可比（见 [11 章](../11-scale-density/README.md)）。
+3. **`quality_ratio` 其实是奖励权重的比值，算不上超参数**：0.600 与 0.769 对应两套不同的奖励函数，跨这两个值的回报不可比（见 [11 章](../11-scale-density/README.md)）。
