@@ -116,12 +116,14 @@ tools/                        解析、清洗、绘图、checkpoint 取证、链
 
 三句话导航：
 1. **只想看结论** → 本文件第 2 节 + [13-results](13-results/README.md)。
-2. **想学机制** → 从 [00-problem](00-problem/README.md) 按编号读到 [09](09-ablation/README.md)。
-3. **想知道这段复现真实发生了什么** → [docs/STORY.md](docs/STORY.md)（按时间线，含跑歪的部分）；**想核数字** → [docs/FACTS.md](docs/FACTS.md) 每行都有出处路径，数据本体在 `data/`。
+2. **想学机制** → 从 [00-problem](00-problem/README.md) 按编号读到 [09](09-ablation/README.md)；**想知道这份实现能不能信** → [14-audit](14-audit/README.md)。
+3. **想核数字** → [docs/FACTS.md](docs/FACTS.md) 每行都有出处路径，数据本体在 `data/`；**想知道这段复现真实发生了什么** → [docs/STORY.md](docs/STORY.md)（按时间线，含跑歪的部分）。
+4. **想问"这段工作证明了什么"**（导师 / 面试官视角）→ 本文件第 **7–9** 节：能力对照表、简历模板、两周最小闭环与停止条件。
 
 1. **Just the verdict** → section 2 above + [13-results](13-results/README.md).
-2. **Learn the mechanisms** → read [00](00-problem/README.md) through [09](09-ablation/README.md) in order.
+2. **Learn the mechanisms** → read [00](00-problem/README.md) through [09](09-ablation/README.md); **to judge whether this implementation can be trusted** → [14-audit](14-audit/README.md).
 3. **Check a number** → [docs/FACTS.md](docs/FACTS.md) lists the source path of every figure quoted anywhere; the raw data lives in `data/`.
+4. **"What does this work demonstrate?"** (advisor / interviewer view) → sections **7–9** below: skill-to-evidence table, CV template, and a two-week loop with an explicit stop criterion.
 
 ---
 
@@ -169,7 +171,61 @@ python tools\plot_curves.py   --data data --out figures\curves
 
 ---
 
-## 7. 出处与致谢 / Provenance
+## 7. 这段工作证明了什么 / What this work demonstrates
+
+不是"我跑通了代码"，而是"我独立完成了一次实现审计，并知道下一步该验证什么"。下面这张表是给**看结果的人**（导师、面试官、合作者）准备的：每一行都能在仓库里点开核对。
+
+Not "I got the code running" — "I ran an independent implementation audit and know what to verify next". Every row below is checkable inside this repository.
+
+| 能力 | 这里的具体证据 | 去哪看 |
+|---|---|---|
+| 读懂论文并忠实实现 | 7 个算法 × 3 种子 × **88 次训练**；自建 TensorBoard 解析器（不依赖 tensorboard / protobuf / matplotlib） | [`13`](13-results/README.md)、`tools/safe_tfreader.py` |
+| 工程化与可复算 | 数据管线（解析 → 清洗 → 绘图）、checkpoint 取证（不装 torch 直接读张量名与参数量）、双语 15 章、链接自检脚本 | `tools/`、[`docs/DATA.md`](docs/DATA.md) |
+| 科学怀疑与定位能力 | 论文名次不复现 → 不辩解、不删种子，而是定位到 **7 处实现层原因**，并按证据强度分级（E3 物证 / E2 代码 / E1 转述） | [`14`](14-audit/README.md) |
+| 边界意识 | 主动标注：D2SAC 是**重建实现**、本地代码已修改过、物理侧无数据、快照与训练版本不一致 | [`14`](14-audit/README.md) §1、§2、§4 |
+| 成本与风险判断 | 为下一步给出 **22 次训练**的最小闭环，并给出停止条件（而不是"再跑跑看"） | 本文件 §9 |
+
+---
+
+## 8. 简历段落（模板，改成你自己的话再用）/ CV template
+
+> 措辞原则：**带数字、带限定、不说满**。"复现了论文"人人都会写；"定位到 6 处实现缺陷、其中 3 处有物证"才是可核验的。
+
+**中文**
+
+- **EAT 论文复现与实现审计**（独立完成）
+  复现 TMC 投稿算法 EAT 及 6 个基线，7 算法 × 3 种子共 88 次训练；自建 TensorBoard 日志解析 / 清洗 / 绘图管线（零第三方绘图依赖），全部曲线可逐点复算。
+- 发现论文排名不可复现，并定位到 7 处实现层原因：全局种子缺失（物证：两次运行 step-0 评估**逐位相同**）、双 critic 结构不对称（实测差 **65,792** 参数 = 恰好一层）、扩散策略熵项被置零、actor 越界无约束等；按证据强度分级（权重级 / 代码级 / 转述级）。
+- 设计三组受控实验（种子确定性 / critic 对称化 / 熵项恢复，约 22 次训练）把代码级证据升级为因果结论，并给出停止条件；产物为开源双语仓库（15 章 + 数据管线 + 校验工具）。
+
+**English**
+
+- **Reproduction and implementation audit of the EAT paper** (independent)
+  Reproduced EAT and six baselines (7 algorithms × 3 seeds = 88 training runs) and built the whole TensorBoard parsing / curation / plotting pipeline with no third-party plotting dependency; every curve is recomputable point by point.
+- Found that the paper's ranking does not reproduce, and traced it to seven implementation-level causes: no global RNG seed (evidence: two runs share a bit-identical step-0 evaluation), asymmetric twin critics (65,792 parameters = exactly one layer), a zeroed entropy term in the diffusion-SAC policy, and an unbounded actor; each claim carries an explicit evidence level.
+- Designed three controlled experiments (~22 short runs) to turn the code-level claims into causal ones, including an explicit stop criterion; shipped as a bilingual repository with 15 chapters, a data pipeline and self-checks.
+
+> 三句话不要写：❌"我发现了原作者的 bug"（改成"定位到实现层原因"） · ❌"我复现了 EAT"（没有数字就无信息量） · ❌"D2SAC 最后一名说明论文有问题"（D2SAC 是重建实现，这条必须和结论绑在一起）。
+
+---
+
+## 9. 下一步：两周最小闭环 / Next: a two-week minimal loop
+
+先修 `trainer/dcasac` 的 `schedule_timesteps` 笔误让快照能跑（见 [`14`](14-audit/README.md) A6），再做三组对照——每一组都能独立成表：
+
+| # | 对照 | 产出 | 成本 |
+|---|---|---|---|
+| 1 | 设种子后**同配置跑两次**，逐位比较曲线 | "本实现可复现"的地基（最低成本、最高说服力） | 2 次训练 |
+| 2 | critic 对称化**前后**各 5 种子（EAT） | "少一层是否改变均值与方差" | 10 次训练 |
+| 3 | D2SAC **恢复熵项 + 自动温度**前后各 5 种子 | "D2SAC 垫底有多少来自实现" | 10 次训练 |
+
+**停止条件（先定好，避免无限投入）**：若第 2 组的均值差 < 3 分且方差无显著变化，则这条线不再追加实验，只作为"实现细节不影响主结论"的负结果保留。
+
+**不建议**做的事：把这条线扩展成正式投稿（算法无新增贡献）、或直接拿现有 PPO 实现去搭 MAPPO（会叠加 A4 / A5 / A1 三处问题，见 [`14`](14-audit/README.md) 与 [docs/REPRODUCE.md](docs/REPRODUCE.md) §3）。
+
+---
+
+## 10. 出处与致谢 / Provenance
 
 - 代码来源：作者工作区 `EAT-master/EAT-Train`、`EAT-master/EAT-Server`，原样拷入 `code/`，未改逻辑。
 - 训练日志：作者工作区 `EAT-master/EATlogs/EAT基线对比/**`（TensorBoard event 文件）。
@@ -183,7 +239,7 @@ python tools\plot_curves.py   --data data --out figures\curves
 
 ---
 
-## 8. 上传到 GitHub / Pushing to GitHub
+## 11. 上传到 GitHub / Pushing to GitHub
 
 本目录已经是一个独立 git 仓库，并已有一笔初始提交（361 个文件，约 20 MB）：
 
@@ -204,7 +260,7 @@ This directory is already its own git repository with one initial commit (361 fi
 
 ---
 
-## 9. 一句话结论 / One-line verdict
+## 12. 一句话结论 / One-line verdict
 
 **机制方向复现出来了，名次没有。** 交叉注意力 + DDIM + 可学习 η 的组合在两个种子上拿到 187.28 的平均终点回报（高于任何算法的三种子均值），但它对随机种子极其敏感 —— 第三个种子掉到 158.68；论文的排序需要更多种子和同预算训练才能验证。
 
