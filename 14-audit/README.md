@@ -69,18 +69,22 @@ A further reason to be careful: the snapshot is **not** the revision that traine
 - 代码：`trainer/dicasac/trainer.py#L132-L134` 取 `first_dim = _crit[0]`、`tail = tuple(_crit[1:])`，然后
   `L148 critic1 = Critic(preprocess_net=..., hidden_sizes=critic_hidden_sizes)`，
   `L169 critic2 = Critic(preprocess_net=..., hidden_sizes=tail)`。
-- 权重（`tools/ckpt_inventory.py` 直接读 `policy_best.pth`）：
+- 权重（`tools/ckpt_inventory.py` 直接读 `policy_best.pth`，共 20 个 EAT checkpoint）：
 
-| EAT 版本 | critic1 | critic2 | 差值 |
-|---|---|---|---|
-| 主扫描 `fig6-main`（709,560） | 155,809 | 155,809 | 0 |
-| `fallback-rerun` / `learning-rate`（841,144） | **221,601** | **155,809** | **65,792** |
+| EAT 版本 | checkpoint 数 | critic1 | critic2 | 差值 |
+|---|---|---|---|---|
+| 主扫描 `fig6-main`（709,560，08-19） | 3 | 155,809 | 155,809 | **0**（对称） |
+| `trials` / `learning-rate` / `fallback-rerun`（841,144，08-12 ~ 08-17） | **17** | **221,601** | **155,809** | **65,792** |
 
-65,792 = 256×256 + 256，**正好是 critic1 多出来的一整层**。也就是说这不是"理论上可能不对称"，而是某一版权重里确实少一层。
+65,792 = 256×256 + 256，**正好是 critic1 多出来的一整层**。也就是说这不是"理论上可能不对称"，而是 17 个 checkpoint 里确实少一层；而 08-19 的 3 次正式运行是**对称**的。
 
-**影响**：SAC 族的目标是 `min(Q1,Q2) − α·logπ`，两个 Q 应当同分布、同容量；容量不同会让 `min` 系统性偏向弱的那一个，同时"双 Q 抑制高估"的前提（两个独立同分布估计）被破坏。
+**这个分布本身是个线索**：`AAAresult.docx` 里作者自己写过"两个 critic 要统一用 `tail`"，而最终主扫描的权重确实是对称的 —— 推断：主扫描之前已经修过这个问题，A2 影响的是 `trials` / 3e-4 支路 / fallback 重跑这三批，**不影响第 13 章那张主表**。这条修正很重要：它把 A2 从"推翻主结果"降级为"让旁支对比失去可比性"。
+
+**影响**：SAC 族的目标是 `min(Q1,Q2) − α·logπ`，两个 Q 应当同分布、同容量；容量不同会让 `min` 系统性偏向弱的那一个，同时"双 Q 抑制高估"的前提（两个独立同分布估计）被破坏。所以凡是用 841,144 版 EAT 与其它臂比较的地方（第 [10](../10-tuning/README.md) 章的 fallback 与 3e-4 两节），结论都要打折扣。
 
 **修复**：两者都用 `critic_hidden_sizes`（或都用 `tail`），然后跑对照。
+
+> EN — 3 main-sweep checkpoints are symmetric; all **17** checkpoints of the 841,144-parameter variant (trials, 3e-4, fallback) are asymmetric by exactly one 256×256+256 layer. The author's own note asked for symmetric critics and the final sweep complies, so A2 weakens the side comparisons (fallback, 3e-4), not the headline table.
 
 ### A3 D2SAC 的熵项被硬置零 —— E2
 

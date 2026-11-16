@@ -179,7 +179,7 @@ DDPG 1.28 s / 质量 0.033、TD3 2.44 s / 质量 0.033 是**策略崩塌**的特
 | 编号 | 事实 | 位置 |
 |---|---|---|
 | A1 | 全树 0 处 `manual_seed` / `np.random.seed` / `random.seed`；只有环境种子（默认 42） | `env/env.py#L42-L46`、`#L127-L129`；`scripts/config.py#L51`；七个 `*_train.py` 传 `cfg_train.seed` |
-| A2 | `critic1` 用 `critic_hidden_sizes`，`critic2` 用 `tail = critic_hidden_sizes[1:]` | `trainer/dicasac/trainer.py#L132-L134`、`#L148`、`#L169` |
+| A2 | `critic1` 用 `critic_hidden_sizes`，`critic2` 用 `tail = critic_hidden_sizes[1:]`；主扫描 3 个 checkpoint 对称（155,809 / 155,809），841,144 版的 **17 个** checkpoint 不对称（221,601 / 155,809，差 65,792 = 一层） | `trainer/dicasac/trainer.py#L132-L134`、`#L148`、`#L169`；权重见 `tools/ckpt_inventory.py` |
 | A3 | `SACDDPMPolicy` 把 `entropy` 硬置零；`SACDDIMPolicy` 保留 | `policy/sac_diffusion.py#L159-L161`、`#L167-L173`、`#L393-L394` |
 | A4 | 七个 trainer 的 `ActorProb(unbounded=True)`（无 tanh 压缩） | `ppo#L52`、`appo#L63`、`cappo#L63`、`sac#L70`、`asac#L72`、`casac#L66`、`dppo#L96` |
 | A5 | 上述 trainer 均未传 `activation=` → tianshou 默认 ReLU；注意力/扩散模块用 Mish | `cross_attention.py#L46`、`self_attention.py#L41`、`trainer/dicasac/trainer.py#L44` |
