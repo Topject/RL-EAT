@@ -85,26 +85,27 @@ Four parts, 14 ordered projects. Each chapter is a self-contained mini-project w
 | [10](10-tuning/README.md) | 调参：学习率 3e-4、fallback 重跑 | 3e-4 救不了 D2SAC/TD3；fallback 重跑把 EAT 的方差从 16.5 压到 2.1，但那一次换的是网络结构（3e-4 支路的 EAT 也换了：709,560 → 841,144） |
 | [11](11-scale-density/README.md) | 规模与密度：32 节点 × 4 档质量比 | 跨 quality_ratio 的回报不可比 —— 24 和 180 的差别是奖励函数变了，不是学得更好 |
 
-### 第四部分｜物理侧与结论 / Part IV — the physical side and the verdict
+### 第四部分｜物理侧、结论与审计 / Part IV — the physical side, the verdict, and the audit
 
 | 章 | 内容 | 结论一句话 |
 |---|---|---|
 | [12](12-server/README.md) | EAT-Server + Stable Diffusion 物理执行 | 仿真里"任务 = 固定执行时间"，物理侧才是真正的 SD 推理；本仓库没有物理日志，只记录实现路径 |
 | [13](13-results/README.md) | 汇总、论文排序 vs 复现排序、下一步 | 复现到的是"机制方向"，没复现到的是"名次" |
+| [14](14-audit/README.md) | **实现审计**：七处会改变结论的问题 | 没有全局种子、critic 不对称、熵项被置零、actor 不做 tanh、ReLU≠Mish、快照跑不起来、配置漂移；其中三处有代码之外的物证 |
 
 ---
 
 ## 4. 怎么读这个仓库 / How to read it
 
 ```
-00-problem/ … 13-results/     14 个按顺序读的章节（每章一个 README，中英双语）
+00-problem/ … 14-audit/       15 个按顺序读的章节（每章一个 README，中英双语）
 code/eat-train/               训练侧源码快照（原 EAT-master/EAT-Train，含 14 个 trainer）
 code/eat-server/              推理服务侧源码快照（原 EAT-master/EAT-Server）
 data/<campaign>/<algo>/<run>/ 每次训练一条：curves.csv（曲线）+ run.json（元数据）
 data/runs_index.csv           88 次运行一行一条，含终点/最高回报与目录
 data/by_algorithm.csv         按「实验 × 算法」聚合的均值±标准差
 figures/curves/               全部从 data/ 重绘的图（Pillow，无 matplotlib 依赖）
-figures/original/             作者当时自己画的图（保留原样，便于对照）
+figures/original/             作者当时自己画的图（含复现者交给导师的 Fig6 归一化图）
 docs/STORY.md                 按时间顺序的复现过程（先跑歪了、发现哪歪了、再修）
 docs/FACTS.md                 所有被引用的数字及其出处
 docs/DATA.md                  训练数据格式、字段、如何自己解析 tfevents
@@ -154,6 +155,7 @@ python tools\plot_curves.py   --data data --out figures\curves
 | 评估指标（响应时间/质量） | 只有作者手工抄录的 64 节点单种子表（`docs/FACTS.md` §7），**没有**可重算的原始评估日志 |
 | 物理 SD 验证 | 代码在，日志与结果缺失（`12-server`） |
 | 论文名次 | **未复现**（见第 2 节、[13](13-results/README.md)） |
+| 实现能否支撑论文结论 | **不足以**：七处问题，其中三处有物证（见 [14](14-audit/README.md)） |
 
 | dimension | status |
 |---|---|
@@ -163,6 +165,7 @@ python tools\plot_curves.py   --data data --out figures\curves
 | evaluation metrics (latency / quality) | only the author's hand-transcribed 64-node single-seed table (`docs/FACTS.md` §7); no replayable evaluation logs |
 | physical SD validation | code present, logs and results missing (`12-server`) |
 | the paper's ranking | **not reproduced** (section 2, [13](13-results/README.md)) |
+| can this implementation support the paper | **no**: seven issues, three with evidence beyond the source (see [14](14-audit/README.md)) |
 
 ---
 

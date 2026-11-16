@@ -173,3 +173,17 @@ DDPG 1.28 s / 质量 0.033、TD3 2.44 s / 质量 0.033 是**策略崩塌**的特
 | PPO | `update/loss/{ent,clip,vf}` | 有熵/裁剪/价值损失，无温度 |
 
 "温度轨迹未记录"这句话**只对 D2SAC 成立**；SAC 有但只覆盖前 1/10 的预算，EAT 用 η 代替温度且全程有记录。
+
+**(4) 审计用的代码事实（[14-audit](../14-audit/README.md) 的 A1–A7 出处）。**
+
+| 编号 | 事实 | 位置 |
+|---|---|---|
+| A1 | 全树 0 处 `manual_seed` / `np.random.seed` / `random.seed`；只有环境种子（默认 42） | `env/env.py#L42-L46`、`#L127-L129`；`scripts/config.py#L51`；七个 `*_train.py` 传 `cfg_train.seed` |
+| A2 | `critic1` 用 `critic_hidden_sizes`，`critic2` 用 `tail = critic_hidden_sizes[1:]` | `trainer/dicasac/trainer.py#L132-L134`、`#L148`、`#L169` |
+| A3 | `SACDDPMPolicy` 把 `entropy` 硬置零；`SACDDIMPolicy` 保留 | `policy/sac_diffusion.py#L159-L161`、`#L167-L173`、`#L393-L394` |
+| A4 | 七个 trainer 的 `ActorProb(unbounded=True)`（无 tanh 压缩） | `ppo#L52`、`appo#L63`、`cappo#L63`、`sac#L70`、`asac#L72`、`casac#L66`、`dppo#L96` |
+| A5 | 上述 trainer 均未传 `activation=` → tianshou 默认 ReLU；注意力/扩散模块用 Mish | `cross_attention.py#L46`、`self_attention.py#L41`、`trainer/dicasac/trainer.py#L44` |
+| A6 | 传 `schedule_timesteps=` 但签名只接受 `n_timesteps`；`eval_dcasac.py` 实为 EAT 的评估脚本 | `trainer/dcasac/trainer.py#L116`、`rl_diffusion.py#L34`、`eval_dcasac.py#L11` |
+| A7 | 七个训练脚本写死 `node_num=64`、`lr = 3e-4` | 各 `*_train.py`（例：`sac_train.py#L36`、`#L46`） |
+
+证据等级：A1 / A2 / A6 为 **E3**（另有物证：DPPO 两次 step-0 均为 148.589691；841,144 版 critic1 = 221,601 对 critic2 = 155,809，差恰为一层 65,792；按现有代码实例化即 `TypeError`）；A3 / A4 / A5 / A7 为 **E2**（代码可核，影响未量化）。
