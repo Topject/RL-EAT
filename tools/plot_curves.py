@@ -60,6 +60,9 @@ ALGO_STYLE = {
 }
 
 ORDER = ["ddpg", "td3", "sac", "ppo", "d2sac", "dppo", "eat"]
+
+# one blue for all per-algorithm pages, so the seven pages read as a set
+UNIFIED_BLUE = (31, 119, 180)
 _FONTS: dict[tuple[int, bool], ImageFont.FreeTypeFont] = {}
 
 Y_LABEL = "\u9a8c\u8bc1\u56de\u62a5 / validation return"
@@ -392,9 +395,13 @@ def main() -> int:
         runs = fig6[algo]
         top = max(reward_series(r)[-1][0] for r in runs if reward_series(r))
         p = out / f"{algo}_convergence.png"
-        multi_curve(p, f"{label} \u2014 three seeds",
-                    f"EMA(0.25) of test/reward \u00b7 {len(runs)} runs \u00b7 band = seed min/max",
-                    [(label, runs, color)], 120, 205, top * 1.02, legend_rows=1, band_alpha=55)
+        # per-algorithm figures share one blue so the seven pages read as a set,
+        # and the run count is printed both in the title and in the legend
+        multi_curve(p, f"{label} \u00b7 {len(runs)} runs",
+                    f"{len(runs)} independent training runs \u00b7 EMA(0.25) of test/reward \u00b7 "
+                    f"band = seed min/max",
+                    [(f"{label} (n={len(runs)})", runs, UNIFIED_BLUE)],
+                    120, 205, top * 1.02, legend_rows=1, band_alpha=55)
         made.append(p)
 
     rows = []
