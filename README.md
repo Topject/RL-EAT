@@ -245,11 +245,11 @@ The multi-agent extension is a separate effort: 170 formal training runs across 
 
 ## 11. 上传到 GitHub
 
-本目录已经是一个独立 git 仓库，并且有初始提交，共 365 个文件、约 20 MB。
+本目录已经是一个独立 git 仓库，有 17 个提交、367 个文件，约 32 MB（含 .git）。远端是 github.com/Topject/RL-EAT。
 
 ```powershell
 cd EAT-Story
-git remote add origin https://github.com/<你的账号>/<仓库名>.git
+git remote add origin https://github.com/Topject/RL-EAT.git
 git branch -M main
 git push -u origin main
 ```
